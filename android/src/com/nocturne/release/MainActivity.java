@@ -29,8 +29,6 @@ public class MainActivity extends Activity {
         s.setJavaScriptEnabled(true);
         s.setDomStorageEnabled(true);
         s.setDatabaseEnabled(true);
-        // 보안 하드닝: file:// 교차오리진/유니버설 접근 비허용(기본 false 유지),
-        //   파일·콘텐츠 접근 비활성. android_asset/android_res 는 이 설정과 무관하게 로드됨.
         s.setAllowFileAccess(false);
         s.setAllowContentAccess(false);
         s.setUseWideViewPort(true);
@@ -38,7 +36,6 @@ public class MainActivity extends Activity {
         s.setSupportZoom(false);
         s.setBuiltInZoomControls(false);
         s.setDisplayZoomControls(false);
-        // 시스템 글꼴 크기 설정이 레이아웃을 깨뜨리지 않도록 고정
         s.setTextZoom(100);
 
         web.setBackgroundColor(Color.parseColor("#08090D"));
@@ -52,7 +49,6 @@ public class MainActivity extends Activity {
         web.loadUrl("file:///android_asset/index.html");
     }
 
-    /** 하드웨어 뒤로가기: 페이지가 처리하면 앱을 유지하고, 아니면 종료. */
     @Override
     public void onBackPressed() {
         if (web == null) {

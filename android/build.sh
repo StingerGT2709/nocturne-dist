@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# 녹턴 APK 빌드 — Gradle 없이 aapt2 + d8 + apksigner 직접 사용
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -9,8 +8,6 @@ ANDROID_JAR="$SDK/platforms/android-34/android.jar"
 JDK="/c/Program Files/Java/jdk-17"
 OUT="build"
 APK_NAME="nocturne.apk"
-# 키스토어 비밀번호: 환경변수로 지정 (평문 기본값 없음)
-#   예: KS_PASS=nocturne bash build.sh
 KS_PASS="${KS_PASS:?키스토어 비밀번호를 환경변수 KS_PASS로 지정하세요 (예: KS_PASS=nocturne bash build.sh)}"
 
 for f in "$BT/aapt2.exe" "$BT/zipalign.exe" "$BT/apksigner.bat" "$BT/d8.bat" "$ANDROID_JAR" "$JDK/bin/javac"; do
