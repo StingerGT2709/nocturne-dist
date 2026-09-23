@@ -1,0 +1,2775 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="format-detection" content="telephone=no">
+<title>녹턴</title>
+<style>
+/* 번들 폰트 — 네트워크 없이 동작 */
+@font-face{font-family:'Black Han Sans';src:url('fonts/BlackHanSans-Regular.ttf') format('truetype');
+  font-weight:400;font-style:normal;font-display:block}
+@font-face{font-family:'Rajdhani';src:url('fonts/Rajdhani-Medium.ttf') format('truetype');
+  font-weight:500;font-style:normal;font-display:block}
+@font-face{font-family:'Rajdhani';src:url('fonts/Rajdhani-SemiBold.ttf') format('truetype');
+  font-weight:600;font-style:normal;font-display:block}
+@font-face{font-family:'Rajdhani';src:url('fonts/Rajdhani-Bold.ttf') format('truetype');
+  font-weight:700;font-style:normal;font-display:block}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+img{max-width:100%}
+[hidden]{display:none !important}
+/* 네이티브 앱처럼: 롱프레스 메뉴·텍스트 선택 차단 (입력창은 예외) */
+*{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+input,select,textarea{-webkit-user-select:text;user-select:text}
+/* ============================================================
+   녹턴 카지노 — 심야 카지노 플로어라는 하나의 시각 세계에 커밋한
+   단일 다크 테마. 테마 스왑 없음, 모든 색을 토큰으로 명시 선언.
+   ============================================================ */
+:root{
+  --void:#08090d;
+  --felt:#0e1118;
+  --felt-hi:#161b26;
+  --felt-top:#1e2434;
+  --line:#262c3a;
+  --gold:#e8c15a;
+  --gold-lo:#a8802a;
+  --gold-hi:#f7e3a4;
+  --crimson:#e5243f;
+  --crimson-lo:#8e1226;
+  --jade:#2fd6a0;
+  --jade-lo:#0f6b50;
+  --violet:#7b5cff;
+  --bone:#efe9dc;
+  --ash:#8d8878;
+  --ash-dim:#5d5a52;
+  --r-s:6px; --r-m:12px; --r-l:18px;
+  --shell:480px;
+  --topbar:56px; --notice:28px; --nav:62px;
+  --ff-disp:'Black Han Sans','Noto Sans KR',sans-serif;
+  --ff-body:'Noto Sans KR','Noto Sans CJK KR',sans-serif;
+  --ff-num:'Rajdhani','Noto Sans KR',sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:#000}
+body{
+  margin:0;background:var(--void);color:var(--bone);
+  font-family:var(--ff-body);font-size:14px;line-height:1.5;
+  overscroll-behavior:none;
+}
+button{font-family:inherit;color:inherit;border:0;background:none;cursor:pointer}
+input,select{font-family:inherit;font-size:16px}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.num{font-family:var(--ff-num);font-variant-numeric:tabular-nums;letter-spacing:.03em}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
+}
+
+/* ---------- 앱 셸 ---------- */
+#shell{
+  position:relative;max-width:var(--shell);margin:0 auto;overflow-x:clip;
+  min-height:100vh;min-height:100dvh;background:var(--void);
+  box-shadow:0 0 0 1px #14171f,0 0 90px rgba(232,193,90,.07);
+  display:flex;flex-direction:column;
+}
+@media(min-width:600px){
+  body{background:radial-gradient(900px 500px at 50% -10%,rgba(232,193,90,.10),transparent 60%),#05060a}
+}
+
+/* ---------- 상단바 ---------- */
+#topbar{
+  position:sticky;top:0;z-index:40;height:var(--topbar);flex:0 0 auto;
+  display:flex;align-items:center;gap:9px;padding:0 12px;
+  background:linear-gradient(180deg,#0d1017,#080a10);
+  border-bottom:1px solid rgba(232,193,90,.22);
+}
+.logo{display:flex;align-items:baseline;gap:5px;font-family:var(--ff-disp)}
+.logo b{font-size:21px;font-weight:400;
+  background:linear-gradient(175deg,var(--gold-hi) 8%,var(--gold) 42%,var(--gold-lo) 92%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.logo i{font-style:normal;font-size:9px;color:var(--ash-dim);letter-spacing:.2em;font-family:var(--ff-num)}
+.sim-tag{font-size:8px;letter-spacing:.09em;color:var(--ash-dim);
+  border:1px solid var(--line);padding:2px 4px;border-radius:3px;white-space:nowrap}
+.bal-chip{margin-left:auto;display:flex;align-items:center;gap:6px;
+  background:linear-gradient(180deg,#1a2030,#11151f);
+  border:1px solid rgba(232,193,90,.3);border-radius:999px;padding:5px 11px 5px 9px}
+.bal-chip .w{font-size:10px;color:var(--gold)}
+.bal-chip .v{font-size:13px;font-weight:700;color:var(--gold-hi);max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bal-chip .u{font-size:10px;color:var(--ash)}
+
+/* ---------- 공지 마퀴 ---------- */
+#notice{flex:0 0 auto;height:var(--notice);display:flex;align-items:center;gap:8px;overflow:hidden;
+  background:linear-gradient(90deg,rgba(142,18,38,.55),rgba(142,18,38,.14));
+  border-bottom:1px solid #1b1f2a;padding-left:10px}
+#notice .lbl{flex:0 0 auto;font-size:9px;font-weight:900;letter-spacing:.07em;color:#ffd9de;
+  background:var(--crimson-lo);border:1px solid rgba(229,36,63,.6);border-radius:3px;padding:2px 5px}
+#notice .track{flex:1;min-width:0;overflow:hidden;position:relative;height:100%}
+#notice .track span{position:absolute;white-space:nowrap;font-size:11.5px;color:#f0d5d9;
+  line-height:var(--notice);animation:marq 30s linear infinite;padding-left:100%}
+@keyframes marq{from{transform:translateX(0)}to{transform:translateX(-100%)}}
+
+/* ---------- 뷰 ---------- */
+#views{flex:1 1 auto}
+.view{display:none;padding:14px 12px calc(var(--nav) + 28px)}
+.view.on{display:block;animation:vin .2s ease-out}
+@keyframes vin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ---------- 하단 네비 ---------- */
+#nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);z-index:50;
+  width:100%;max-width:var(--shell);
+  height:calc(var(--nav) + env(safe-area-inset-bottom,0px));
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  display:grid;grid-template-columns:repeat(5,1fr);
+  background:linear-gradient(180deg,#0d1017,#06070b);
+  border-top:1px solid rgba(232,193,90,.2)}
+#nav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  font-size:10px;font-weight:500;color:var(--ash-dim);position:relative}
+#nav button svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;
+  stroke-linecap:round;stroke-linejoin:round}
+#nav button.on{color:var(--gold)}
+#nav button.on::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:26px;height:2px;background:var(--gold);border-radius:0 0 3px 3px;box-shadow:0 0 10px var(--gold)}
+
+/* ---------- 공용 ---------- */
+.sec-h{display:flex;align-items:center;gap:8px;margin:20px 2px 10px}
+.sec-h h2{margin:0;font-family:var(--ff-disp);font-weight:400;font-size:15px;color:var(--bone)}
+.sec-h .rule{flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+.sec-h .more{font-size:11px;color:var(--ash-dim)}
+.panel{background:var(--felt);border:1px solid var(--line);border-radius:var(--r-m);padding:14px}
+.muted{color:var(--ash);font-size:12px}
+.dim{color:var(--ash-dim)}
+.gold{color:var(--gold)}
+.up{color:var(--jade)}
+.down{color:var(--crimson)}
+.row{display:flex;align-items:center;gap:8px}
+.spread{display:flex;align-items:center;justify-content:space-between;gap:8px}
+
+/* ---------- 잔액 카드 ---------- */
+.wallet{position:relative;overflow:hidden;border-radius:var(--r-l);padding:18px 16px 16px;
+  background:radial-gradient(120% 90% at 88% -20%,rgba(232,193,90,.16),transparent 62%),
+             linear-gradient(160deg,#1a2032,#0d1017 60%);
+  border:1px solid rgba(232,193,90,.28)}
+.wallet::after{content:'';position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(115deg,transparent 0 22px,rgba(232,193,90,.028) 22px 23px)}
+.wallet>*{position:relative;z-index:1}
+.wallet .cap{font-size:11px;color:var(--ash);letter-spacing:.05em}
+.wallet .amt{display:flex;align-items:baseline;gap:6px;margin:6px 0 2px}
+.wallet .amt b{font-size:34px;font-weight:700;color:var(--gold-hi);text-shadow:0 0 22px rgba(232,193,90,.4)}
+.wallet .amt s{text-decoration:none;font-size:15px;color:var(--gold);font-weight:700}
+.wallet .sub{font-size:11px;color:var(--ash-dim)}
+.wallet .acts{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
+
+/* ---------- 버튼 ---------- */
+.btn{display:flex;align-items:center;justify-content:center;gap:6px;height:44px;
+  border-radius:var(--r-s);font-weight:700;font-size:14px;
+  border:1px solid var(--line);background:var(--felt-hi);color:var(--bone);
+  transition:transform .08s,filter .15s}
+.btn:active{transform:scale(.975)}
+.btn[disabled]{opacity:.34;pointer-events:none}
+.btn-gold{background:linear-gradient(180deg,var(--gold-hi),var(--gold) 45%,var(--gold-lo));
+  color:#20180a;border-color:var(--gold-lo);font-weight:900;box-shadow:0 3px 16px rgba(232,193,90,.24)}
+.btn-red{background:linear-gradient(180deg,#f14158,var(--crimson) 48%,var(--crimson-lo));
+  color:#fff;border-color:#7d1020;font-weight:900;box-shadow:0 3px 16px rgba(229,36,63,.24)}
+.btn-ghost{background:transparent}
+.btn-sm{height:34px;font-size:12px;border-radius:5px;padding:0 12px}
+.btn-lg{height:50px;font-size:15px}
+.btn-blk{width:100%}
+
+/* ---------- 게임 그리드 ---------- */
+.games{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gcard{position:relative;overflow:hidden;border-radius:var(--r-m);aspect-ratio:1/.86;
+  border:1px solid var(--line);text-align:left;padding:12px;display:flex;flex-direction:column;
+  transition:transform .1s,border-color .2s}
+.gcard:active{transform:scale(.97)}
+.gcard .nm{font-family:var(--ff-disp);font-weight:400;font-size:17px;line-height:1.15;position:relative;z-index:2}
+.gcard .en{font-family:var(--ff-num);font-size:8.5px;letter-spacing:.15em;opacity:.6;position:relative;z-index:2;margin-top:2px}
+.gcard .edge{margin-top:auto;position:relative;z-index:2;font-size:10px;color:rgba(255,255,255,.62)}
+.gcard .edge b{font-family:var(--ff-num);font-size:11px;color:#fff}
+.gcard .art{position:absolute;inset:0;z-index:1;pointer-events:none}
+.gcard.bacc{background:linear-gradient(150deg,#123a2c,#08150f)}
+.gcard.bacc{border-color:rgba(47,214,160,.3)}
+.gcard.bj{background:linear-gradient(150deg,#3a1420,#150709);border-color:rgba(229,36,63,.3)}
+.gcard.roul{background:linear-gradient(150deg,#2b1c3d,#110b18);border-color:rgba(123,92,255,.32)}
+.gcard.sic{background:linear-gradient(150deg,#123047,#08131c);border-color:rgba(78,160,214,.3)}
+.gcard.slot{background:linear-gradient(150deg,#3d2f0e,#171106);border-color:rgba(232,193,90,.34)}
+.gcard.wide{grid-column:1/-1;aspect-ratio:auto;min-height:96px}
+
+/* 카드 아트: CSS로 그린 모티프 */
+.art-suit{position:absolute;right:-6px;bottom:-14px;font-size:78px;line-height:1;opacity:.13;color:#fff}
+.art-wheel{position:absolute;right:-26px;bottom:-26px;width:104px;height:104px;border-radius:50%;
+  opacity:.3;background:conic-gradient(#e5243f 0 10%,#15181f 0 20%,#e5243f 0 30%,#15181f 0 40%,
+  #e5243f 0 50%,#15181f 0 60%,#e5243f 0 70%,#15181f 0 80%,#2fd6a0 0 90%,#15181f 0);
+  border:3px solid rgba(232,193,90,.5)}
+.art-reel{position:absolute;right:8px;bottom:8px;display:flex;gap:3px;opacity:.28}
+.art-reel i{width:20px;height:34px;border-radius:3px;background:linear-gradient(180deg,#fff6,#fff1);
+  border:1px solid rgba(255,255,255,.25)}
+.art-dice{position:absolute;right:6px;bottom:2px;display:flex;gap:4px;opacity:.3;transform:rotate(-12deg)}
+
+/* ---------- 실시간 당첨 티커 ---------- */
+.ticker{border:1px solid var(--line);border-radius:var(--r-m);background:var(--felt);overflow:hidden}
+.ticker .hd{display:flex;align-items:center;gap:6px;padding:8px 12px;border-bottom:1px solid var(--line);
+  font-size:11px;color:var(--ash)}
+.ticker .live{width:6px;height:6px;border-radius:50%;background:var(--crimson);
+  box-shadow:0 0 8px var(--crimson);animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.ticker ul{list-style:none;margin:0;padding:0;height:132px;overflow:hidden}
+.ticker li{display:flex;align-items:center;gap:8px;padding:0 12px;height:33px;font-size:11.5px;
+  border-bottom:1px solid #171b24;animation:slidein .4s ease-out}
+@keyframes slidein{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
+.ticker li .u{color:var(--ash);width:64px;flex:0 0 auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ticker li .g{color:var(--ash-dim);flex:1;font-size:10.5px}
+.ticker li .a{font-family:var(--ff-num);font-weight:700;color:var(--gold);font-size:11.5px}
+
+/* ---------- 폼 ---------- */
+.field{margin-bottom:14px}
+.field>label{display:block;font-size:11.5px;color:var(--ash);margin-bottom:6px;letter-spacing:.02em}
+.field>label .req{color:var(--crimson);margin-left:2px}
+.inp{width:100%;height:46px;padding:0 12px;border-radius:var(--r-s);
+  background:#0a0d13;border:1px solid var(--line);color:var(--bone);
+  transition:border-color .15s,box-shadow .15s}
+.inp:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(232,193,90,.13);outline:none}
+.inp::placeholder{color:#454b57}
+select.inp{appearance:none;
+  background-image:linear-gradient(45deg,transparent 50%,var(--ash) 50%),linear-gradient(135deg,var(--ash) 50%,transparent 50%);
+  background-position:calc(100% - 18px) 21px,calc(100% - 13px) 21px;
+  background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:34px}
+.inp.bad{border-color:var(--crimson);box-shadow:0 0 0 3px rgba(229,36,63,.12)}
+.inp.ok{border-color:var(--jade);box-shadow:0 0 0 3px rgba(47,214,160,.1)}
+.hint{font-size:10.5px;color:var(--ash-dim);margin-top:5px;line-height:1.45}
+.hint.err{color:#ff7d8e}
+.hint.good{color:var(--jade)}
+.hint code{font-family:var(--ff-num);color:var(--gold);font-size:10.5px}
+
+/* 금액 퀵버튼 */
+.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.quick button{height:38px;border-radius:5px;border:1px solid var(--line);background:var(--felt-hi);
+  font-size:12px;font-weight:700;color:var(--bone);font-family:var(--ff-num)}
+.quick button:active{background:var(--felt-top)}
+.quick button.clr{color:var(--ash-dim);font-family:var(--ff-body);font-weight:500}
+
+/* 안내 박스 */
+.callout{border-radius:var(--r-s);padding:11px 12px;font-size:11.5px;line-height:1.6;
+  background:rgba(232,193,90,.06);border:1px solid rgba(232,193,90,.22);color:#d9cfae}
+.callout.red{background:rgba(229,36,63,.07);border-color:rgba(229,36,63,.28);color:#f0c3ca}
+.callout b{color:var(--gold)}
+.callout.red b{color:#ff96a4}
+.callout ul{margin:6px 0 0;padding-left:16px}
+.callout li{margin:2px 0}
+
+/* 마스터 뱃지 */
+.master-badge{display:inline-flex;align-items:center;gap:4px;font-family:var(--ff-num);font-size:9px;
+  font-weight:700;letter-spacing:.1em;color:#0b1a14;background:var(--jade);
+  padding:2px 6px;border-radius:3px}
+
+/* ---------- 충전 진행 상태 ---------- */
+.steps{display:flex;align-items:center;gap:4px;margin-bottom:16px}
+.steps .s{flex:1;text-align:center;font-size:10px;color:var(--ash-dim);position:relative;padding-top:20px}
+.steps .s::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:14px;height:14px;border-radius:50%;background:var(--felt-hi);border:1px solid var(--line)}
+.steps .s.on{color:var(--gold)}
+.steps .s.on::before{background:var(--gold);border-color:var(--gold);box-shadow:0 0 10px rgba(232,193,90,.5)}
+.steps .s.done::before{background:var(--jade-lo);border-color:var(--jade)}
+.steps .bar{flex:0 0 18px;height:1px;background:var(--line);margin-top:20px}
+
+.vacct{border-radius:var(--r-m);padding:16px;text-align:center;
+  background:linear-gradient(160deg,#1a2032,#0c0f16);border:1px solid rgba(232,193,90,.3)}
+.vacct .lbl{font-size:11px;color:var(--ash)}
+.vacct .no{font-family:var(--ff-num);font-size:20px;font-weight:700;color:var(--gold-hi);
+  margin:8px 0 3px;letter-spacing:.04em;word-break:break-all}
+.vacct .who{font-size:12px;color:var(--bone)}
+.vacct .timer{font-family:var(--ff-num);font-size:13px;color:var(--crimson);margin-top:10px;font-weight:700}
+.vacct .amt{font-family:var(--ff-num);font-size:16px;color:var(--gold);font-weight:700}
+
+.pending{display:flex;flex-direction:column;align-items:center;gap:12px;padding:30px 0}
+.spinner{width:42px;height:42px;border-radius:50%;border:3px solid var(--line);
+  border-top-color:var(--gold);animation:spin .9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.done-mark{width:56px;height:56px;border-radius:50%;background:rgba(47,214,160,.13);
+  border:2px solid var(--jade);display:grid;place-items:center;color:var(--jade);font-size:26px;
+  animation:pop .35s cubic-bezier(.3,1.5,.5,1)}
+@keyframes pop{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
+
+/* ---------- 내역 ---------- */
+.tabs{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;padding-bottom:2px}
+.tabs button{flex:0 0 auto;height:32px;padding:0 14px;border-radius:999px;font-size:12px;font-weight:500;
+  border:1px solid var(--line);background:var(--felt);color:var(--ash)}
+.tabs button.on{background:var(--gold);color:#20180a;border-color:var(--gold);font-weight:700}
+.hist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
+.hist li{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:var(--r-s);
+  background:var(--felt);border:1px solid var(--line)}
+.hist .ic{width:32px;height:32px;flex:0 0 auto;border-radius:50%;display:grid;place-items:center;
+  font-size:13px;font-weight:900;font-family:var(--ff-disp)}
+.hist .ic.dep{background:rgba(47,214,160,.13);color:var(--jade)}
+.hist .ic.wd{background:rgba(229,36,63,.13);color:var(--crimson)}
+.hist .ic.bet{background:rgba(232,193,90,.11);color:var(--gold)}
+.hist .mid{flex:1;min-width:0}
+.hist .t1{font-size:12.5px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hist .t2{font-size:10px;color:var(--ash-dim);font-family:var(--ff-num)}
+.hist .rt{text-align:right;flex:0 0 auto}
+.hist .v{font-family:var(--ff-num);font-size:13px;font-weight:700}
+.hist .b{font-size:9.5px;color:var(--ash-dim);font-family:var(--ff-num)}
+.empty{text-align:center;padding:44px 20px;color:var(--ash-dim);font-size:12.5px}
+.empty .big{font-size:34px;opacity:.3;margin-bottom:10px}
+
+/* ---------- MY ---------- */
+.tier{display:flex;align-items:center;gap:12px;padding:15px;border-radius:var(--r-m);
+  background:linear-gradient(140deg,#241c33,#0e0b14);border:1px solid rgba(123,92,255,.3)}
+.tier .medal{width:50px;height:50px;flex:0 0 auto;border-radius:50%;display:grid;place-items:center;
+  font-family:var(--ff-disp);font-size:19px;color:#1a1206;
+  background:linear-gradient(160deg,var(--gold-hi),var(--gold-lo));
+  box-shadow:0 0 20px rgba(232,193,90,.3)}
+.tier .nm{font-family:var(--ff-disp);font-size:16px}
+.tier .pg{height:5px;border-radius:3px;background:#1b1826;margin-top:7px;overflow:hidden}
+.tier .pg i{display:block;height:100%;border-radius:3px;
+  background:linear-gradient(90deg,var(--gold-lo),var(--gold-hi))}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stat{padding:12px;border-radius:var(--r-s);background:var(--felt);border:1px solid var(--line)}
+.stat .k{font-size:10.5px;color:var(--ash-dim)}
+.stat .v{font-family:var(--ff-num);font-size:17px;font-weight:700;margin-top:3px}
+.menu{display:flex;flex-direction:column;background:var(--felt);border:1px solid var(--line);
+  border-radius:var(--r-m);overflow:hidden}
+.menu button{display:flex;align-items:center;gap:10px;padding:14px;font-size:13px;text-align:left;
+  border-bottom:1px solid var(--line)}
+.menu button:last-child{border-bottom:0}
+.menu button .ar{margin-left:auto;color:var(--ash-dim);font-size:15px}
+.menu button .tagv{margin-left:auto;color:var(--ash-dim);font-size:11px;font-family:var(--ff-num)}
+
+/* 확률표 */
+.odds{width:100%;border-collapse:collapse;font-size:11.5px}
+.odds th,.odds td{padding:8px 6px;text-align:right;border-bottom:1px solid var(--line)}
+.odds th{color:var(--ash-dim);font-weight:500;font-size:10px;letter-spacing:.03em}
+.odds td:first-child,.odds th:first-child{text-align:left}
+.odds td.n{font-family:var(--ff-num);font-variant-numeric:tabular-nums}
+.odds .grp td{background:#12151d;color:var(--gold);font-weight:700;font-size:11px;
+  font-family:var(--ff-disp);text-align:left}
+.scroll-x{overflow-x:auto}
+
+/* ============================================================
+   게임 화면
+   ============================================================ */
+#gameview{position:fixed;inset:0;z-index:60;background:var(--void);display:none;
+  max-width:var(--shell);margin:0 auto;flex-direction:column}
+#gameview.on{display:flex;animation:vin .2s ease-out}
+.g-top{flex:0 0 auto;height:52px;display:flex;align-items:center;gap:10px;padding:0 12px;
+  background:linear-gradient(180deg,#0d1017,#080a10);border-bottom:1px solid rgba(232,193,90,.22)}
+.g-top .bk{width:34px;height:34px;display:grid;place-items:center;border-radius:50%;
+  background:var(--felt-hi);border:1px solid var(--line);font-size:16px}
+.g-top .ttl{font-family:var(--ff-disp);font-size:16px}
+.g-top .bal{margin-left:auto;text-align:right}
+.g-top .bal .k{font-size:9px;color:var(--ash-dim)}
+.g-top .bal .v{font-family:var(--ff-num);font-size:14px;font-weight:700;color:var(--gold)}
+.g-body{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;padding:12px 12px 8px}
+.g-foot{flex:0 0 auto;border-top:1px solid var(--line);background:#0a0c12;
+  padding:9px 12px calc(9px + env(safe-area-inset-bottom,0px))}
+
+/* 펠트 테이블 */
+.felt{border-radius:var(--r-m);padding:14px 12px;
+  background:radial-gradient(120% 100% at 50% 0%,#1a4a38,#0a2419 70%);
+  border:1px solid rgba(47,214,160,.22);position:relative;overflow:hidden}
+.felt.red{background:radial-gradient(120% 100% at 50% 0%,#4a1524,#210a12 70%);
+  border-color:rgba(229,36,63,.22)}
+.felt.pur{background:radial-gradient(120% 100% at 50% 0%,#2c1f4a,#140e21 70%);
+  border-color:rgba(123,92,255,.22)}
+.felt.blu{background:radial-gradient(120% 100% at 50% 0%,#123a52,#081a26 70%);
+  border-color:rgba(78,160,214,.22)}
+.felt.gld{background:radial-gradient(120% 100% at 50% 0%,#3d2f10,#191206 70%);
+  border-color:rgba(232,193,90,.26)}
+
+/* 베팅 칩 */
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 4px}
+.chip{flex:0 0 auto;width:50px;height:50px;border-radius:50%;position:relative;
+  display:grid;place-items:center;font-family:var(--ff-num);font-size:11px;font-weight:700;
+  border:0;transition:transform .12s}
+.chip::before{content:'';position:absolute;inset:0;border-radius:50%;
+  background:conic-gradient(var(--cs) 0 8%,var(--cd) 0 16.66%,var(--cs) 0 25%,var(--cd) 0 33.3%,
+    var(--cs) 0 41.6%,var(--cd) 0 50%,var(--cs) 0 58.3%,var(--cd) 0 66.6%,
+    var(--cs) 0 75%,var(--cd) 0 83.3%,var(--cs) 0 91.6%,var(--cd) 0)}
+.chip::after{content:'';position:absolute;inset:6px;border-radius:50%;background:var(--cs);
+  border:1px dashed rgba(255,255,255,.35)}
+.chip span{position:relative;z-index:2;color:var(--ct)}
+.chip.sel{transform:translateY(-5px) scale(1.07)}
+.chip.sel::before{box-shadow:0 0 0 2px var(--gold),0 6px 18px rgba(0,0,0,.6)}
+.chip.c1{--cs:#2c6fd6;--cd:#e8eef7;--ct:#fff}
+.chip.c2{--cs:#c9302c;--cd:#f7e8e8;--ct:#fff}
+.chip.c3{--cs:#2f9e5f;--cd:#e8f7ee;--ct:#fff}
+.chip.c4{--cs:#221f2b;--cd:#d8d4e4;--ct:#fff}
+.chip.c5{--cs:#8a2fd6;--cd:#f0e8f7;--ct:#fff}
+.chip.c6{--cs:#d6a52c;--cd:#fff6e0;--ct:#241a05}
+
+/* 베팅 스팟 */
+.spots{display:grid;gap:8px;margin-top:12px}
+.spot{position:relative;border-radius:var(--r-s);padding:11px 8px;text-align:center;
+  border:1.5px solid var(--line);background:rgba(0,0,0,.3);transition:border-color .15s,background .15s}
+.spot .nm{font-family:var(--ff-disp);font-size:14px;line-height:1.1}
+.spot .pay{font-family:var(--ff-num);font-size:9.5px;color:var(--ash);margin-top:2px}
+.spot .stk{font-family:var(--ff-num);font-size:11px;font-weight:700;color:var(--gold);
+  margin-top:4px;min-height:15px}
+.spot.has{border-color:var(--gold);background:rgba(232,193,90,.09)}
+.spot.win{animation:winflash .5s ease-out 3}
+@keyframes winflash{0%,100%{box-shadow:0 0 0 0 rgba(47,214,160,0)}
+  50%{box-shadow:0 0 0 3px rgba(47,214,160,.65)}}
+.spot.p{border-color:rgba(74,144,226,.5)}
+.spot.b{border-color:rgba(229,36,63,.5)}
+.spot.t{border-color:rgba(47,214,160,.5)}
+.spot.sm{padding:8px 4px}
+.spot.sm .nm{font-size:12px}
+.spot.sm .pay{font-size:8.5px}
+
+/* 트럼프 카드 */
+.hand{display:flex;gap:5px;align-items:center;justify-content:center;min-height:76px;flex-wrap:wrap}
+.pc{width:50px;height:72px;border-radius:5px;flex:0 0 auto;position:relative;
+  background:linear-gradient(160deg,#fffdf6,#e7e1d2);
+  box-shadow:0 3px 10px rgba(0,0,0,.5);display:flex;flex-direction:column;
+  padding:4px 5px;animation:deal .3s ease-out}
+@keyframes deal{from{opacity:0;transform:translateY(-22px) rotate(-8deg)}to{opacity:1;transform:none}}
+.pc .r{font-size:15px;font-weight:900;line-height:1;font-family:'Noto Sans KR',sans-serif}
+.pc .s{font-size:13px;line-height:1;margin-top:1px}
+.pc .big{position:absolute;bottom:2px;right:4px;font-size:25px;line-height:1;opacity:.9}
+.pc.red{color:#c8102e}
+.pc.blk{color:#15171c}
+.pc.back{background:
+  repeating-linear-gradient(45deg,#8e1226 0 5px,#6d0d1c 5px 10px);
+  border:2px solid #f7e3a4}
+.pc.sm{width:38px;height:54px}
+.pc.sm .r{font-size:12px}
+.pc.sm .s{font-size:10px}
+.pc.sm .big{font-size:18px}
+
+.side{text-align:center;margin-bottom:10px}
+.side .lb{font-size:10.5px;color:var(--ash);letter-spacing:.08em;margin-bottom:5px}
+.side .tot{display:inline-block;min-width:38px;padding:2px 9px;border-radius:999px;
+  font-family:var(--ff-num);font-size:13px;font-weight:700;
+  background:rgba(0,0,0,.5);border:1px solid var(--line);margin-top:6px}
+.side .tot.hot{border-color:var(--gold);color:var(--gold)}
+.side .tot.bust{border-color:var(--crimson);color:var(--crimson)}
+.side .tot.bj{border-color:var(--jade);color:var(--jade)}
+
+/* 결과 배너 */
+.result{text-align:center;padding:11px;border-radius:var(--r-s);margin-top:11px;
+  font-family:var(--ff-disp);font-size:16px;animation:pop .3s cubic-bezier(.3,1.5,.5,1)}
+.result.w{background:rgba(47,214,160,.14);border:1px solid var(--jade);color:var(--jade)}
+.result.l{background:rgba(229,36,63,.12);border:1px solid var(--crimson);color:#ff8b9b}
+.result.p{background:rgba(232,193,90,.11);border:1px solid var(--gold);color:var(--gold)}
+.result .sm2{display:block;font-family:var(--ff-num);font-size:13px;margin-top:3px}
+
+/* 바카라 로드맵 */
+.road{display:grid;grid-auto-flow:column;grid-template-rows:repeat(6,15px);gap:2px;
+  overflow-x:auto;padding:8px;background:rgba(0,0,0,.42);border-radius:var(--r-s);
+  border:1px solid var(--line);min-height:104px}
+.road i{width:15px;height:15px;border-radius:50%;display:grid;place-items:center;
+  font-size:8.5px;font-weight:700;color:#fff;font-style:normal;font-family:var(--ff-num)}
+.road i.B{background:var(--crimson)}
+.road i.P{background:#2c6fd6}
+.road i.T{background:var(--jade-lo);border:1px solid var(--jade)}
+.rd-legend{display:flex;gap:12px;justify-content:center;margin-top:7px;font-size:10px;color:var(--ash-dim)}
+.rd-legend b{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:3px;vertical-align:-1px}
+
+/* 룰렛 */
+.wheel-wrap{display:grid;place-items:center;padding:6px 0 12px;position:relative}
+.wheel{width:190px;height:190px;border-radius:50%;position:relative;
+  border:5px solid;border-image:linear-gradient(160deg,var(--gold-hi),var(--gold-lo)) 1;
+  box-shadow:0 0 34px rgba(232,193,90,.22),inset 0 0 26px rgba(0,0,0,.75)}
+.wheel .inner{position:absolute;inset:0;border-radius:50%;transition:none}
+.wheel .hub{position:absolute;inset:32%;border-radius:50%;
+  background:radial-gradient(circle at 34% 30%,#3a3020,#0d0b07);
+  border:2px solid var(--gold-lo);display:grid;place-items:center;z-index:3}
+.wheel .hub b{font-family:var(--ff-num);font-size:22px;font-weight:700;color:var(--gold-hi)}
+.ball{position:absolute;top:50%;left:50%;width:0;height:0;z-index:4}
+.ball i{position:absolute;width:11px;height:11px;border-radius:50%;
+  background:radial-gradient(circle at 32% 30%,#fff,#b9b4a6);
+  box-shadow:0 0 9px rgba(255,255,255,.75);transform:translate(-50%,-50%)}
+.ptr{position:absolute;top:-4px;left:50%;transform:translateX(-50%);z-index:5;
+  width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;
+  border-top:14px solid var(--gold-hi);filter:drop-shadow(0 2px 4px rgba(0,0,0,.7))}
+.numgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:3px;margin-top:10px}
+.numgrid button{aspect-ratio:1;border-radius:3px;font-family:var(--ff-num);font-size:11px;
+  font-weight:700;color:#fff;border:1px solid transparent;position:relative}
+.numgrid button.rd{background:#b81b30}
+.numgrid button.bk{background:#1a1d25}
+.numgrid button.gr{background:var(--jade-lo);grid-column:1/-1;aspect-ratio:auto;height:28px}
+.numgrid button.has{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
+.numgrid button em{position:absolute;top:-4px;right:-4px;font-style:normal;font-family:var(--ff-num);
+  font-size:8px;background:var(--gold);color:#20180a;border-radius:6px;padding:0 3px;font-weight:900;
+  max-width:130%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.last-nums{display:flex;gap:5px;overflow-x:auto;padding:2px 0}
+.last-nums i{flex:0 0 auto;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;
+  font-style:normal;font-family:var(--ff-num);font-size:10px;font-weight:700;color:#fff}
+.last-nums i.rd{background:#b81b30}
+.last-nums i.bk{background:#1a1d25;border:1px solid #333}
+.last-nums i.gr{background:var(--jade-lo)}
+
+/* 주사위 */
+.dice-row{display:flex;gap:12px;justify-content:center;padding:14px 0}
+.die{width:56px;height:56px;border-radius:9px;background:linear-gradient(155deg,#fffdf6,#ddd7c8);
+  box-shadow:0 4px 12px rgba(0,0,0,.55),inset 0 -3px 6px rgba(0,0,0,.12);
+  display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr);padding:7px;gap:2px}
+.die.sm{width:26px;height:26px;padding:3px;border-radius:5px}
+.die u{width:100%;height:100%;border-radius:50%;background:#15171c;text-decoration:none;
+  opacity:0;transform:scale(.5);transition:opacity .12s,transform .12s}
+.die u.on{opacity:1;transform:scale(1)}
+.die.roll{animation:shake .42s ease-in-out}
+@keyframes shake{0%,100%{transform:translateY(0) rotate(0)}
+  25%{transform:translateY(-12px) rotate(-16deg)}
+  50%{transform:translateY(3px) rotate(11deg)}
+  75%{transform:translateY(-6px) rotate(-7deg)}}
+.sum-big{text-align:center;font-family:var(--ff-num);font-size:15px;color:var(--ash)}
+.sum-big b{font-size:29px;color:var(--gold-hi);font-weight:700}
+
+/* 슬롯 */
+.slot-cab{border-radius:var(--r-m);padding:14px;
+  background:linear-gradient(165deg,#3d2f10,#120d05);
+  border:2px solid var(--gold-lo);box-shadow:inset 0 0 30px rgba(0,0,0,.7)}
+.reels{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;
+  background:#05060a;border-radius:var(--r-s);padding:7px;border:1px solid var(--gold-lo)}
+.reel{height:96px;overflow:hidden;border-radius:4px;position:relative;
+  background:linear-gradient(180deg,#22262f,#0e1117 45%,#22262f)}
+.reel .strip{position:absolute;top:0;left:0;width:100%;display:flex;flex-direction:column}
+.reel .strip div{height:96px;display:grid;place-items:center;font-size:40px;line-height:1}
+.reel::after{content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(0,0,0,.65),transparent 32%,transparent 68%,rgba(0,0,0,.65))}
+.payline{height:2px;background:linear-gradient(90deg,transparent,var(--crimson),transparent);
+  margin:8px 0 0;opacity:.75}
+.slot-win{text-align:center;font-family:var(--ff-disp);font-size:15px;color:var(--gold-hi);
+  min-height:24px;margin-top:8px;text-shadow:0 0 14px rgba(232,193,90,.6)}
+.paytable{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:11px;font-size:11px}
+.paytable div{display:flex;align-items:center;gap:5px;padding:5px 7px;border-radius:4px;
+  background:rgba(0,0,0,.35);border:1px solid rgba(232,193,90,.15)}
+.paytable b{margin-left:auto;font-family:var(--ff-num);color:var(--gold);font-size:11px}
+
+/* 베팅바 */
+.betbar{display:flex;align-items:center;gap:8px}
+.betbar .amt{flex:1;min-width:0}
+.betbar .amt .k{font-size:9.5px;color:var(--ash-dim)}
+.betbar .amt .v{font-family:var(--ff-num);font-size:16px;font-weight:700;color:var(--gold)}
+.betbar .btn{flex:0 0 auto;padding:0 15px}
+
+/* 토스트 */
+#toast{position:fixed;left:50%;bottom:calc(var(--nav) + 20px);transform:translateX(-50%);
+  z-index:90;display:flex;flex-direction:column;gap:7px;align-items:center;
+  pointer-events:none;width:100%;max-width:var(--shell);padding:0 16px}
+.toast{max-width:100%;padding:11px 16px;border-radius:8px;font-size:12.5px;font-weight:500;
+  background:#1d222e;border:1px solid var(--line);color:var(--bone);
+  box-shadow:0 8px 26px rgba(0,0,0,.6);animation:tin .25s ease-out}
+.toast.ok{border-color:var(--jade);color:#b6f0da}
+.toast.no{border-color:var(--crimson);color:#ffc0c9}
+.toast.gd{border-color:var(--gold);color:#f5e5bb}
+@keyframes tin{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* 모달 */
+#modal{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;
+  padding:20px;background:rgba(3,4,7,.82);backdrop-filter:blur(3px)}
+#modal.on{display:flex}
+.sheet{width:100%;max-width:340px;border-radius:var(--r-l);padding:20px;
+  background:linear-gradient(165deg,#1a2032,#0c0f16);border:1px solid rgba(232,193,90,.3);
+  animation:pop .28s cubic-bezier(.3,1.4,.5,1)}
+.sheet h3{margin:0 0 8px;font-family:var(--ff-disp);font-size:17px;font-weight:400}
+.sheet p{margin:0 0 16px;font-size:12.5px;color:var(--ash);line-height:1.65}
+.sheet .acts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sheet .acts.one{grid-template-columns:1fr}
+
+/* 스플래시 */
+#splash{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:var(--void);
+  transition:opacity .5s;text-align:center}
+#splash.off{opacity:0;pointer-events:none}
+#splash .lg{font-family:var(--ff-disp);font-size:40px;
+  background:linear-gradient(175deg,var(--gold-hi),var(--gold) 45%,var(--gold-lo));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:glow 2s ease-in-out infinite}
+@keyframes glow{0%,100%{filter:drop-shadow(0 0 8px rgba(232,193,90,.3))}
+  50%{filter:drop-shadow(0 0 22px rgba(232,193,90,.6))}}
+#splash .tg{font-family:var(--ff-num);font-size:10px;letter-spacing:.3em;color:var(--ash-dim);margin-top:6px}
+#splash .sim{margin-top:26px;font-size:11px;color:var(--ash-dim);line-height:1.7}
+
+/* ---------- 게임 방법 ---------- */
+#howto{position:fixed;inset:0;z-index:70;background:var(--void);display:none;
+  max-width:var(--shell);margin:0 auto;flex-direction:column}
+#howto.on{display:flex;animation:vin .2s ease-out}
+.h-body{flex:1 1 auto;overflow-y:auto;padding:14px 14px calc(22px + env(safe-area-inset-bottom,0px))}
+.h-lead{border-radius:var(--r-m);padding:13px 14px;margin-bottom:16px;font-size:12.5px;line-height:1.75;
+  background:linear-gradient(160deg,#1a2032,#0c0f16);border:1px solid rgba(232,193,90,.28);color:#ddd3b6}
+.h-lead b{color:var(--gold)}
+.h-sec{margin-bottom:17px}
+.h-sec h3{margin:0 0 9px;font-family:var(--ff-disp);font-weight:400;font-size:14px;color:var(--gold);
+  display:flex;align-items:center;gap:7px}
+.h-sec h3::before{content:'';width:3px;height:13px;border-radius:2px;background:var(--gold)}
+.h-sec p{margin:0 0 8px;font-size:12.5px;line-height:1.8;color:var(--bone)}
+.h-sec ul{margin:0;padding-left:16px}
+.h-sec li{font-size:12.5px;line-height:1.8;margin:4px 0;color:var(--bone)}
+.h-sec b{color:var(--gold)}
+.h-tbl{width:100%;border-collapse:collapse;font-size:12px}
+.h-tbl td{padding:8px;border-bottom:1px solid var(--line);color:var(--bone)}
+.h-tbl td:last-child{text-align:right;font-family:var(--ff-num);color:var(--gold);
+  font-weight:700;white-space:nowrap}
+.h-tip{border-radius:var(--r-s);padding:12px;font-size:12px;line-height:1.75;
+  background:rgba(47,214,160,.07);border:1px solid rgba(47,214,160,.26);color:#bfe9d8}
+.h-tip b{color:var(--jade);font-family:var(--ff-num);letter-spacing:.06em;margin-right:4px}
+.gcard .help{position:absolute;top:8px;right:8px;z-index:3;width:23px;height:23px;border-radius:50%;
+  display:grid;place-items:center;font-size:12px;font-weight:700;color:rgba(255,255,255,.72);
+  background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.2)}
+.g-top .help{height:31px;padding:0 12px;border-radius:16px;font-size:11.5px;font-weight:700;
+  background:var(--felt-hi);border:1px solid var(--line);color:var(--ash);display:grid;place-items:center}
+#splash .ldbar{width:120px;height:3px;border-radius:2px;background:#191c25;margin:26px auto 0;overflow:hidden}
+#splash .ldbar i{display:block;height:100%;width:38%;border-radius:2px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);animation:ld 1.1s ease-in-out infinite}
+@keyframes ld{0%{transform:translateX(-110%)}100%{transform:translateX(330%)}}
+
+/* ---------- 로그인 / 회원가입 ---------- */
+#auth{position:fixed;inset:0;z-index:95;display:none;flex-direction:column;
+  max-width:var(--shell);margin:0 auto;overflow-y:auto;
+  background:
+    radial-gradient(120% 60% at 50% -8%,rgba(232,193,90,.14),transparent 60%),
+    linear-gradient(180deg,#0c0f16,#050609 70%);
+  padding:calc(38px + env(safe-area-inset-top,0px)) 26px calc(30px + env(safe-area-inset-bottom,0px))}
+#auth.on{display:flex}
+.auth-brand{text-align:center;margin:22px 0 26px}
+.auth-brand .lg{font-family:var(--ff-disp);font-size:44px;line-height:1;
+  background:linear-gradient(175deg,var(--gold-hi),var(--gold) 45%,var(--gold-lo));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 18px rgba(232,193,90,.28))}
+.auth-brand .tg{font-family:var(--ff-num);font-size:11px;letter-spacing:.34em;color:var(--ash-dim);margin-top:7px}
+.auth-card{background:linear-gradient(165deg,#161b26,#0c0f16);
+  border:1px solid rgba(232,193,90,.24);border-radius:var(--r-l);padding:20px 18px 22px;
+  box-shadow:0 18px 50px rgba(0,0,0,.5)}
+.auth-tabs{display:flex;gap:6px;margin-bottom:18px;background:#0a0d13;border-radius:10px;padding:4px}
+.auth-tabs button{flex:1;height:38px;border-radius:7px;font-size:13.5px;font-weight:700;color:var(--ash);
+  transition:background .15s,color .15s}
+.auth-tabs button.on{background:linear-gradient(180deg,var(--gold-hi),var(--gold) 55%,var(--gold-lo));
+  color:#20180a;box-shadow:0 3px 12px rgba(232,193,90,.28)}
+.auth-form{display:none;flex-direction:column;gap:13px}
+.auth-form.on{display:flex;animation:vin .22s ease-out}
+.auth-check{display:flex;align-items:center;gap:9px;cursor:pointer;user-select:none;margin-top:2px}
+.auth-check input{position:absolute;opacity:0;width:0;height:0}
+.auth-check .box{width:20px;height:20px;flex:0 0 auto;border-radius:5px;border:1.5px solid var(--line);
+  background:#0a0d13;display:grid;place-items:center;transition:all .15s}
+.auth-check input:checked + .box{background:var(--gold);border-color:var(--gold)}
+.auth-check input:checked + .box::after{content:'✓';color:#20180a;font-size:13px;font-weight:900}
+.auth-check span{font-size:12.5px;color:var(--bone)}
+.auth-check input:focus-visible + .box{outline:2px solid var(--gold);outline-offset:2px}
+.auth-msg{min-height:16px;font-size:11.5px;line-height:1.5;color:#ff8b9b;text-align:center}
+.auth-msg.ok{color:var(--jade)}
+.auth-switch{text-align:center;font-size:12px;color:var(--ash);margin-top:16px}
+.auth-switch b{color:var(--gold);font-weight:700;cursor:pointer;margin-left:4px}
+.auth-note{text-align:center;font-size:10.5px;color:var(--ash-dim);margin-top:20px;line-height:1.7}
+/* MY 프로필 행 */
+.profile{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding:2px}
+.profile .av{width:44px;height:44px;flex:0 0 auto;border-radius:50%;display:grid;place-items:center;
+  font-family:var(--ff-disp);font-size:20px;color:#1a1206;
+  background:linear-gradient(160deg,var(--gold-hi),var(--gold-lo));box-shadow:0 0 16px rgba(232,193,90,.25)}
+.profile .nk{font-family:var(--ff-disp);font-size:17px;line-height:1.1}
+.profile .id{font-size:11.5px;color:var(--ash-dim);font-family:var(--ff-num);margin-top:2px}
+.menu button.danger-row{color:#ff8b9b}
+
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <div>
+    <div class="lg">녹턴</div>
+    <div class="tg">NOCTURNE</div>
+    <div class="ldbar"><i></i></div>
+  </div>
+</div>
+
+<div id="auth">
+  <div class="auth-brand">
+    <div class="lg">녹턴</div>
+    <div class="tg">NOCTURNE</div>
+  </div>
+  <div class="auth-card">
+    <div class="auth-tabs">
+      <button id="atLogin" class="on">로그인</button>
+      <button id="atSignup">회원가입</button>
+    </div>
+
+    <!-- 로그인 -->
+    <form class="auth-form on" id="fLogin" autocomplete="off">
+      <input class="inp" id="liId" placeholder="아이디" autocomplete="username" maxlength="20">
+      <input class="inp" id="liPw" type="password" placeholder="비밀번호" autocomplete="current-password" maxlength="30">
+      <label class="auth-check">
+        <input type="checkbox" id="liAuto"><span class="box"></span><span>자동 로그인</span>
+      </label>
+      <div class="auth-msg" id="liMsg"></div>
+      <button type="submit" class="btn btn-gold btn-lg btn-blk" id="liBtn">로그인</button>
+      <div class="auth-switch">계정이 없으신가요?<b id="goSignup">회원가입</b></div>
+    </form>
+
+    <!-- 회원가입 -->
+    <form class="auth-form" id="fSignup" autocomplete="off">
+      <input class="inp" id="suId" placeholder="아이디 (4자 이상, 영문·숫자)" autocomplete="off" maxlength="20">
+      <input class="inp" id="suNick" placeholder="닉네임" autocomplete="off" maxlength="12">
+      <input class="inp" id="suPw" type="password" placeholder="비밀번호 (4자 이상)" autocomplete="new-password" maxlength="30">
+      <input class="inp" id="suPw2" type="password" placeholder="비밀번호 확인" autocomplete="new-password" maxlength="30">
+      <div class="auth-msg" id="suMsg"></div>
+      <button type="submit" class="btn btn-gold btn-lg btn-blk" id="suBtn">가입하고 시작하기</button>
+      <div class="auth-switch">이미 계정이 있으신가요?<b id="goLogin">로그인</b></div>
+    </form>
+
+    <div class="auth-note">계정 정보는 이 기기에만 저장됩니다</div>
+  </div>
+</div>
+
+
+<div id="shell">
+
+  <header id="topbar">
+    <div class="logo"><b>녹턴</b><i>NOCTURNE</i></div>
+    <div class="bal-chip">
+      <span class="w">₩</span><span class="v num" id="topBal">0</span><span class="u">P</span>
+    </div>
+  </header>
+
+  <div id="notice">
+    <span class="lbl">공지</span>
+    <div class="track"><span id="noticeText">신규 회원 첫 충전 30% 보너스 지급 중 · 24시간 실시간 입출금 운영 · VIP 등급별 페이백 최대 5% · 정기 점검 매주 화요일 04:00~06:00 · 안전하고 빠른 서비스로 보답하겠습니다</span></div>
+  </div>
+
+  <main id="views">
+
+    <!-- ============ 홈 ============ -->
+    <section class="view on" id="v-home">
+      <div class="wallet">
+        <div class="cap">보유 머니</div>
+        <div class="amt"><b class="num" id="homeBal">0</b><s>P</s></div>
+        <div class="sub" id="homeSub">충전 후 게임을 시작할 수 있습니다</div>
+        <div class="acts">
+          <button class="btn btn-gold" data-go="wallet" data-tab="dep">충전하기</button>
+          <button class="btn btn-ghost" data-go="wallet" data-tab="wd">출금신청</button>
+        </div>
+      </div>
+
+      <div class="sec-h"><h2>게임</h2><span class="rule"></span>
+        <span class="more" data-go="games">전체보기 ›</span></div>
+      <div class="games" id="homeGames"></div>
+
+      <div class="sec-h"><h2>실시간 당첨</h2><span class="rule"></span></div>
+      <div class="ticker">
+        <div class="hd"><span class="live"></span> LIVE · 최근 당첨 내역</div>
+        <ul id="tickerList"></ul>
+      </div>
+
+      <div class="sec-h"><h2>공정성</h2><span class="rule"></span></div>
+      <div class="callout">
+        <b>국제 표준 배당률로 운영됩니다.</b>
+        <ul>
+          <li>카드는 8덱 슈에서 실시간으로 배분됩니다</li>
+          <li>딜러 개입이나 결과 보정은 일절 없습니다</li>
+          <li>게임별 배당률과 하우스 엣지는 <span class="gold" data-go="odds" style="text-decoration:underline">확률 정보</span>에서 전부 공개합니다</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ 게임 ============ -->
+    <section class="view" id="v-games">
+      <div class="sec-h"><h2>전체 게임</h2><span class="rule"></span></div>
+      <div class="games" id="allGames"></div>
+      <div class="sec-h"><h2>게임 규칙 요약</h2><span class="rule"></span></div>
+      <div class="callout">
+        <b>바카라</b> 8덱 · 뱅커 5% 커미션 · 타이 8:1 · 페어 11:1<br>
+        <b>블랙잭</b> 6덱 · 딜러 소프트17 스탠드 · 블랙잭 3:2 · 보험 2:1 · 스플릿 1회<br>
+        <b>룰렛</b> 유럽식 싱글제로 37칸 · 스트레이트 35:1<br>
+        <b>다이사이</b> 3주사위 · 마카오 배당표<br>
+        <b>슬롯</b> 3릴 32스톱 단일 페이라인 · RTP <span class="gold num" id="slotRtpTxt">–</span>
+      </div>
+    </section>
+
+    <!-- ============ 지갑 (충전/출금) ============ -->
+    <section class="view" id="v-wallet">
+      <div class="tabs">
+        <button class="on" data-wtab="dep">충전</button>
+        <button data-wtab="wd">출금</button>
+      </div>
+
+      <!-- 충전 -->
+      <div id="depWrap">
+        <div class="steps" id="depSteps">
+          <div class="s on">신청</div><span class="bar"></span>
+          <div class="s">입금</div><span class="bar"></span>
+          <div class="s">완료</div>
+        </div>
+
+        <!-- 1단계: 신청서 -->
+        <div id="depForm">
+          <div class="callout red" style="margin-bottom:12px">
+            <b>⚠ 안내</b>
+            <ul>
+              <li>본 화면은 실제 결제·입금이 이루어지지 않습니다</li>
+              <li>표시된 계좌로 실제 송금하지 마세요</li>
+              <li>입력하신 정보는 어디에도 전송·저장되지 않습니다</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <div class="field">
+              <label>충전 금액 <span class="req">*</span></label>
+              <input class="inp num" id="depAmt" type="tel" inputmode="numeric" placeholder="0" autocomplete="off">
+              <div class="hint">최소 10,000P · 1,000P 단위</div>
+            </div>
+            <div class="quick" id="depQuick"></div>
+          </div>
+
+          <div class="panel" style="margin-top:10px">
+            <div class="field">
+              <label>입금자명 <span class="req">*</span></label>
+              <input class="inp" id="depName" placeholder="입금하실 분 성함" autocomplete="off">
+              <div class="hint">입금자명이 다르면 충전 처리가 지연됩니다</div>
+            </div>
+            <div class="field">
+              <label>출금 은행 <span class="req">*</span></label>
+              <select class="inp" id="depBank"></select>
+            </div>
+            <div class="field" style="margin-bottom:0">
+              <label>계좌번호 <span class="req">*</span></label>
+              <input class="inp num" id="depAcct" type="tel" inputmode="numeric" placeholder="- 없이 숫자만 입력" autocomplete="off">
+              <div class="hint" id="depAcctHint"></div>
+            </div>
+          </div>
+
+          <div class="callout red" style="margin-top:10px">
+            <b>안내</b>
+            <ul>
+              <li>본인 명의 계좌만 등록 가능합니다</li>
+              <li>입금자명이 일치하지 않으면 처리가 지연될 수 있습니다</li>
+              <li>충전 신청 후 10분 이내에 입금해 주셔야 합니다</li>
+            </ul>
+          </div>
+
+          <button class="btn btn-gold btn-lg btn-blk" id="depSubmit" style="margin-top:12px">충전 신청</button>
+        </div>
+
+        <!-- 2단계: 입금 대기 -->
+        <div id="depWait" hidden>
+          <div class="vacct">
+            <div class="lbl">아래 계좌로 입금해 주세요</div>
+            <div class="no" id="depVAcct">–</div>
+            <div class="who" id="depVOwner">–</div>
+            <div style="margin-top:12px" class="lbl">입금 금액</div>
+            <div class="amt num" id="depVAmt">0 P</div>
+            <div class="timer">남은 시간 <span id="depTimer">10:00</span></div>
+          </div>
+          <div class="callout" style="margin-top:11px">
+            <b>입금자명 <span id="depWaitName">–</span></b> 으로 정확히 입금해 주세요.<br>
+            금액이나 입금자명이 다르면 자동 승인되지 않습니다.
+          </div>
+          <button class="btn btn-gold btn-lg btn-blk" id="depConfirm" style="margin-top:12px">입금 완료</button>
+          <button class="btn btn-ghost btn-blk" id="depCancel" style="margin-top:8px">신청 취소</button>
+        </div>
+
+        <!-- 처리중 -->
+        <div id="depProc" hidden>
+          <div class="pending">
+            <div class="spinner"></div>
+            <div style="font-weight:700">입금 확인 중</div>
+            <div class="muted" id="depProcMsg">거래내역을 조회하고 있습니다…</div>
+          </div>
+        </div>
+
+        <!-- 3단계: 완료 -->
+        <div id="depDone" hidden>
+          <div class="pending">
+            <div class="done-mark">✓</div>
+            <div style="font-family:var(--ff-disp);font-size:19px">충전 완료</div>
+            <div class="num" style="font-size:24px;font-weight:700;color:var(--gold-hi)" id="depDoneAmt">0 P</div>
+            <div class="muted">보유 머니 <span class="num gold" id="depDoneBal">0</span> P</div>
+          </div>
+          <button class="btn btn-gold btn-lg btn-blk" data-go="games">게임 하러 가기</button>
+          <button class="btn btn-ghost btn-blk" id="depAgain" style="margin-top:8px">추가 충전</button>
+        </div>
+      </div>
+
+      <!-- 출금 -->
+      <div id="wdWrap" hidden>
+        <div class="panel">
+          <div class="spread" style="margin-bottom:12px">
+            <span class="muted">출금 가능 머니</span>
+            <span class="num gold" style="font-size:16px;font-weight:700"><span id="wdAvail">0</span> P</span>
+          </div>
+          <div class="field">
+            <label>출금 금액 <span class="req">*</span></label>
+            <input class="inp num" id="wdAmt" type="tel" inputmode="numeric" placeholder="0" autocomplete="off">
+            <div class="hint">최소 10,000P · 1,000P 단위</div>
+          </div>
+          <div class="quick" id="wdQuick"></div>
+        </div>
+
+        <div class="panel" style="margin-top:10px">
+          <div class="field">
+            <label>예금주명 <span class="req">*</span></label>
+            <input class="inp" id="wdName" placeholder="예금주 성함" autocomplete="off">
+          </div>
+          <div class="field">
+            <label>입금 은행 <span class="req">*</span></label>
+            <select class="inp" id="wdBank"></select>
+          </div>
+          <div class="field">
+            <label>계좌번호 <span class="req">*</span></label>
+            <input class="inp num" id="wdAcct" type="tel" inputmode="numeric" placeholder="- 없이 숫자만 입력" autocomplete="off">
+            <div class="hint" id="wdAcctHint"></div>
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label>출금 비밀번호 <span class="req">*</span></label>
+            <input class="inp num" id="wdPw" type="password" inputmode="numeric" maxlength="4" placeholder="4자리 숫자" autocomplete="off">
+            <div class="hint">MY &gt; 출금 비밀번호에서 변경할 수 있습니다</div>
+          </div>
+        </div>
+
+        <div class="callout red" style="margin-top:10px">
+          <b>안내</b>
+          <ul>
+            <li>등록하신 예금주명과 계좌가 일치해야 합니다</li>
+            <li>출금 신청 후 처리까지 잠시 대기 시간이 있습니다</li>
+          </ul>
+        </div>
+
+        <button class="btn btn-red btn-lg btn-blk" id="wdSubmit" style="margin-top:12px">출금 신청</button>
+      </div>
+    </section>
+
+    <!-- ============ 내역 ============ -->
+    <section class="view" id="v-hist">
+      <div class="tabs" id="histTabs">
+        <button class="on" data-ht="all">전체</button>
+        <button data-ht="dep">충전</button>
+        <button data-ht="wd">출금</button>
+        <button data-ht="bet">베팅</button>
+      </div>
+      <ul class="hist" id="histList"></ul>
+    </section>
+
+    <!-- ============ MY ============ -->
+    <section class="view" id="v-my">
+      <div class="profile">
+        <div class="av" id="pfAv">?</div>
+        <div style="flex:1;min-width:0">
+          <div class="nk" id="pfNick">–</div>
+          <div class="id" id="pfId">@-</div>
+        </div>
+      </div>
+      <div class="tier">
+        <div class="medal" id="myMedal">B</div>
+        <div style="flex:1;min-width:0">
+          <div class="nm" id="myTier">브론즈</div>
+          <div class="muted" id="myTierSub">누적 베팅 0 P</div>
+          <div class="pg"><i id="myTierBar" style="width:0%"></i></div>
+        </div>
+      </div>
+
+      <div class="sec-h"><h2>통계</h2><span class="rule"></span></div>
+      <div class="stats">
+        <div class="stat"><div class="k">총 베팅</div><div class="v num" id="stWager">0</div></div>
+        <div class="stat"><div class="k">총 당첨</div><div class="v num" id="stWin">0</div></div>
+        <div class="stat"><div class="k">손익</div><div class="v num" id="stNet">0</div></div>
+        <div class="stat"><div class="k">실현 환수율</div><div class="v num" id="stRtp">–</div></div>
+        <div class="stat"><div class="k">플레이 판수</div><div class="v num" id="stRounds">0</div></div>
+        <div class="stat"><div class="k">승 / 패</div><div class="v num" id="stWL">0 / 0</div></div>
+      </div>
+
+      <div class="sec-h"><h2>설정</h2><span class="rule"></span></div>
+      <div class="menu">
+        <button data-go="odds">게임별 확률 정보 <span class="ar">›</span></button>
+        <button id="mnPw">출금 비밀번호 변경 <span class="tagv" id="mnPwTag">••••</span></button>
+        <button id="mnLogout">로그아웃 <span class="ar">›</span></button>
+        <button id="mnReset" style="color:#ff8b9b">데이터 전체 초기화 <span class="ar">›</span></button>
+      </div>
+
+      <div class="callout" style="margin-top:16px">
+        <b>고객센터</b>
+        <ul>
+          <li>입출금 문의 24시간 연중무휴 운영</li>
+          <li>정기 점검 매주 화요일 04:00 ~ 06:00</li>
+          <li>이벤트·보너스 지급 내역은 내역 탭에서 확인하실 수 있습니다</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ 확률 정보 ============ -->
+    <section class="view" id="v-odds">
+      <div class="row" style="margin-bottom:14px">
+        <button class="btn btn-ghost btn-sm" data-go="my">‹ 뒤로</button>
+        <h2 style="margin:0;font-family:var(--ff-disp);font-weight:400;font-size:16px">게임별 확률 정보</h2>
+      </div>
+      <div class="callout" style="margin-bottom:12px">
+        녹턴에서 운영 중인 게임별 배당률입니다. 하우스 엣지는 베팅 1단위당 기대 손실률입니다.
+      </div>
+      <div class="panel scroll-x">
+        <table class="odds" id="oddsTable"></table>
+      </div>
+      <div class="callout" style="margin-top:12px">
+        <b>하우스 엣지 읽는 법</b><br>
+        엣지 1.06%는 1만 P를 걸 때마다 평균 106P를 잃는다는 뜻입니다.
+        판수가 늘어날수록 실현 환수율은 이 값에 수렴합니다 — 이것이 카지노가 항상 이기는 이유입니다.
+      </div>
+    </section>
+
+  </main>
+
+  <nav id="nav">
+    <button class="on" data-go="home">
+      <svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>홈</button>
+    <button data-go="games">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg>게임</button>
+    <button data-go="wallet">
+      <svg viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="13" rx="2.5"/><path d="M2.5 10h19"/><path d="M17 14.5h1.5"/></svg>충전</button>
+    <button data-go="hist">
+      <svg viewBox="0 0 24 24"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h10"/></svg>내역</button>
+    <button data-go="my">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c.6-4 3.7-6 7.5-6s6.9 2 7.5 6"/></svg>MY</button>
+  </nav>
+</div>
+
+<!-- ============ 게임 화면 ============ -->
+<div id="gameview">
+  <div class="g-top">
+    <button class="bk" id="gBack">‹</button>
+    <div class="ttl" id="gTitle">게임</div>
+    <button class="help" id="gHelp">게임방법</button>
+    <div class="bal"><div class="k">보유 머니</div><div class="v num" id="gBal">0</div></div>
+  </div>
+  <div class="g-body">
+
+    <!-- 바카라 -->
+    <div class="gpane" id="p-bacc" hidden>
+      <div class="felt">
+        <div class="side">
+          <div class="lb">뱅커 BANKER</div>
+          <div class="hand" id="bcB"></div>
+          <div class="tot" id="bcBT">–</div>
+        </div>
+        <div class="side" style="margin-bottom:0">
+          <div class="lb">플레이어 PLAYER</div>
+          <div class="hand" id="bcP"></div>
+          <div class="tot" id="bcPT">–</div>
+        </div>
+        <div id="bcResult"></div>
+      </div>
+      <div class="spots" style="grid-template-columns:1fr 1fr 1fr">
+        <button class="spot p" data-bc="P"><div class="nm">플레이어</div><div class="pay">1 : 1</div><div class="stk" data-stk="P"></div></button>
+        <button class="spot t" data-bc="T"><div class="nm">타이</div><div class="pay">8 : 1</div><div class="stk" data-stk="T"></div></button>
+        <button class="spot b" data-bc="B"><div class="nm">뱅커</div><div class="pay">0.95 : 1</div><div class="stk" data-stk="B"></div></button>
+      </div>
+      <div class="spots" style="grid-template-columns:1fr 1fr">
+        <button class="spot sm" data-bc="PP"><div class="nm">플레이어 페어</div><div class="pay">11 : 1</div><div class="stk" data-stk="PP"></div></button>
+        <button class="spot sm" data-bc="BP"><div class="nm">뱅커 페어</div><div class="pay">11 : 1</div><div class="stk" data-stk="BP"></div></button>
+      </div>
+      <div class="sec-h"><h2>로드맵</h2><span class="rule"></span>
+        <span class="more num" id="bcShoe">슈 –</span></div>
+      <div class="road" id="bcRoad"></div>
+      <div class="rd-legend">
+        <span><b style="background:#2c6fd6"></b>플레이어</span>
+        <span><b style="background:#e5243f"></b>뱅커</span>
+        <span><b style="background:#0f6b50"></b>타이</span>
+      </div>
+    </div>
+
+    <!-- 블랙잭 -->
+    <div class="gpane" id="p-bj" hidden>
+      <div class="felt red">
+        <div class="side">
+          <div class="lb">딜러 DEALER</div>
+          <div class="hand" id="bjD"></div>
+          <div class="tot" id="bjDT">–</div>
+        </div>
+        <div class="side" style="margin-bottom:0">
+          <div class="lb" id="bjPLabel">플레이어 PLAYER</div>
+          <div class="hand" id="bjP"></div>
+          <div class="tot" id="bjPT">–</div>
+        </div>
+        <div id="bjHands" class="row" style="justify-content:center;gap:6px;margin-top:8px"></div>
+        <div id="bjResult"></div>
+      </div>
+      <div class="spots" id="bjActs" style="grid-template-columns:1fr 1fr" hidden>
+        <button class="btn" data-bj="hit">히트</button>
+        <button class="btn" data-bj="stand">스탠드</button>
+        <button class="btn" data-bj="double">더블다운</button>
+        <button class="btn" data-bj="split">스플릿</button>
+      </div>
+      <div class="spots" id="bjIns" style="grid-template-columns:1fr 1fr" hidden>
+        <button class="btn btn-gold" data-bj="ins-yes">보험 가입</button>
+        <button class="btn btn-ghost" data-bj="ins-no">보험 안함</button>
+      </div>
+      <div class="callout" style="margin-top:11px">
+        <b>규칙</b> 6덱 · 딜러 소프트17 스탠드 · 블랙잭 3:2 · 더블 제한없음 · 스플릿 1회 · 스플릿 A는 1장만
+      </div>
+    </div>
+
+    <!-- 룰렛 -->
+    <div class="gpane" id="p-roul" hidden>
+      <div class="felt pur">
+        <div class="wheel-wrap">
+          <div class="wheel">
+            <div class="ptr"></div>
+            <div class="inner" id="rlInner"></div>
+            <div class="ball" id="rlBall"><i></i></div>
+            <div class="hub"><b id="rlNum">–</b></div>
+          </div>
+        </div>
+        <div class="last-nums" id="rlLast"></div>
+        <div id="rlResult"></div>
+      </div>
+      <div class="sec-h"><h2>아웃사이드 베팅</h2><span class="rule"></span></div>
+      <div class="spots" style="grid-template-columns:1fr 1fr 1fr">
+        <button class="spot sm" data-rl="red"><div class="nm" style="color:#ff6b7d">빨강</div><div class="pay">1 : 1</div><div class="stk" data-stk="red"></div></button>
+        <button class="spot sm" data-rl="black"><div class="nm">검정</div><div class="pay">1 : 1</div><div class="stk" data-stk="black"></div></button>
+        <button class="spot sm" data-rl="even"><div class="nm">짝수</div><div class="pay">1 : 1</div><div class="stk" data-stk="even"></div></button>
+        <button class="spot sm" data-rl="odd"><div class="nm">홀수</div><div class="pay">1 : 1</div><div class="stk" data-stk="odd"></div></button>
+        <button class="spot sm" data-rl="low"><div class="nm">1–18</div><div class="pay">1 : 1</div><div class="stk" data-stk="low"></div></button>
+        <button class="spot sm" data-rl="high"><div class="nm">19–36</div><div class="pay">1 : 1</div><div class="stk" data-stk="high"></div></button>
+        <button class="spot sm" data-rl="d1"><div class="nm">1st 12</div><div class="pay">2 : 1</div><div class="stk" data-stk="d1"></div></button>
+        <button class="spot sm" data-rl="d2"><div class="nm">2nd 12</div><div class="pay">2 : 1</div><div class="stk" data-stk="d2"></div></button>
+        <button class="spot sm" data-rl="d3"><div class="nm">3rd 12</div><div class="pay">2 : 1</div><div class="stk" data-stk="d3"></div></button>
+      </div>
+      <div class="sec-h"><h2>스트레이트 35:1</h2><span class="rule"></span></div>
+      <div class="numgrid" id="rlGrid"></div>
+    </div>
+
+    <!-- 다이사이 -->
+    <div class="gpane" id="p-sic" hidden>
+      <div class="felt blu">
+        <div class="dice-row" id="scDice"></div>
+        <div class="sum-big">합계 <b id="scSum">–</b></div>
+        <div id="scResult"></div>
+      </div>
+      <div class="spots" style="grid-template-columns:1fr 1fr">
+        <button class="spot" data-sc="small"><div class="nm">소 SMALL</div><div class="pay">4–10 · 1:1</div><div class="stk" data-stk="small"></div></button>
+        <button class="spot" data-sc="big"><div class="nm">대 BIG</div><div class="pay">11–17 · 1:1</div><div class="stk" data-stk="big"></div></button>
+        <button class="spot sm" data-sc="odd"><div class="nm">홀</div><div class="pay">1 : 1</div><div class="stk" data-stk="odd"></div></button>
+        <button class="spot sm" data-sc="even"><div class="nm">짝</div><div class="pay">1 : 1</div><div class="stk" data-stk="even"></div></button>
+      </div>
+      <div class="sec-h"><h2>합계 베팅</h2><span class="rule"></span></div>
+      <div class="spots" id="scSums" style="grid-template-columns:repeat(4,1fr)"></div>
+      <div class="sec-h"><h2>트리플</h2><span class="rule"></span></div>
+      <div class="spots" style="grid-template-columns:1fr">
+        <button class="spot sm" data-sc="anytriple"><div class="nm">애니 트리플</div><div class="pay">30 : 1</div><div class="stk" data-stk="anytriple"></div></button>
+      </div>
+      <div class="spots" id="scTriples" style="grid-template-columns:repeat(6,1fr)"></div>
+      <div class="sec-h"><h2>싱글 넘버</h2><span class="rule"></span></div>
+      <div class="spots" id="scSingles" style="grid-template-columns:repeat(6,1fr)"></div>
+    </div>
+
+    <!-- 슬롯 -->
+    <div class="gpane" id="p-slot" hidden>
+      <div class="slot-cab">
+        <div class="reels">
+          <div class="reel"><div class="strip" id="sl0"></div></div>
+          <div class="reel"><div class="strip" id="sl1"></div></div>
+          <div class="reel"><div class="strip" id="sl2"></div></div>
+        </div>
+        <div class="payline"></div>
+        <div class="slot-win" id="slWin"></div>
+      </div>
+      <div class="sec-h"><h2>배당표</h2><span class="rule"></span>
+        <span class="more">RTP <span class="num gold" id="slRtp">–</span></span></div>
+      <div class="paytable" id="slPay"></div>
+      <div class="callout" style="margin-top:11px">
+        3릴 32스톱 단일 페이라인 구성입니다. 공시 환수율은 장기 기대 지급률을 의미합니다.
+      </div>
+    </div>
+
+  </div>
+  <div class="g-foot">
+    <div class="chips" id="gChips"></div>
+    <div class="betbar" style="margin-top:8px">
+      <div class="amt"><div class="k">베팅 합계</div><div class="v"><span id="gStake">0</span> P</div></div>
+      <button class="btn btn-ghost btn-sm" id="gClear">취소</button>
+      <button class="btn btn-ghost btn-sm" id="gRebet">재베팅</button>
+      <button class="btn btn-gold" id="gDeal">딜</button>
+    </div>
+  </div>
+</div>
+
+<div id="howto">
+  <div class="g-top">
+    <button class="bk" id="hBack">‹</button>
+    <div class="ttl" id="hTitle">게임 방법</div>
+  </div>
+  <div class="h-body" id="hBody"></div>
+</div>
+
+<div id="toast"></div>
+
+<div id="modal">
+  <div class="sheet">
+    <h3 id="mTitle">확인</h3>
+    <p id="mBody"></p>
+    <div id="mInputWrap" hidden style="margin-bottom:14px">
+      <input class="inp num" id="mInput" type="password" inputmode="numeric" maxlength="4" placeholder="4자리 숫자">
+    </div>
+    <div class="acts" id="mActs">
+      <button class="btn btn-ghost" id="mNo">취소</button>
+      <button class="btn btn-gold" id="mYes">확인</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =================== ENGINE START ===================
+   순수 확률 로직. DOM 참조 없음 → Node에서 그대로 몬테카를로 검증 가능.
+   ==================================================== */
+var ENGINE = (function(){
+'use strict';
+
+/* ---------- 균등 난수: 모듈로 편향 제거를 위한 기각 표본 ---------- */
+var _buf = new Uint32Array(1);
+function rnd(n){
+  if(n <= 1) return 0;
+  var MAX = 4294967296, limit = MAX - (MAX % n), v;
+  do { crypto.getRandomValues(_buf); v = _buf[0]; } while(v >= limit);
+  return v % n;
+}
+
+/* ---------- 카드 ---------- */
+var RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+var SUITS = ['♠','♥','♦','♣']; // 스페이드 하트 다이아 클럽
+function baccVal(c){ return c.r >= 9 ? 0 : c.r + 1; }        // A=1, 10~K=0
+function bjVal(c){ return c.r === 0 ? 11 : (c.r >= 9 ? 10 : c.r + 1); }
+
+function Shoe(decks, penetration){
+  this.decks = decks;
+  this.pen = penetration || 0.75;
+  this.cards = [];
+  this.reshuffle();
+}
+Shoe.prototype.reshuffle = function(){
+  var c = [];
+  for(var d = 0; d < this.decks; d++)
+    for(var s = 0; s < 4; s++)
+      for(var r = 0; r < 13; r++) c.push({r:r, s:s});
+  for(var i = c.length - 1; i > 0; i--){       // Fisher-Yates
+    var j = rnd(i + 1), t = c[i]; c[i] = c[j]; c[j] = t;
+  }
+  this.cards = c;
+  this.total = c.length;
+  this.cut = Math.floor(c.length * (1 - this.pen));
+  this.justShuffled = true;
+};
+Shoe.prototype.draw = function(){
+  if(this.cards.length === 0) this.reshuffle();
+  return this.cards.pop();
+};
+Shoe.prototype.checkCut = function(){
+  if(this.cards.length <= this.cut){ this.reshuffle(); return true; }
+  return false;
+};
+Shoe.prototype.left = function(){ return this.cards.length; };
+
+/* ==================== 바카라 (푼토 방코 8덱) ==================== */
+function baccarat(shoe){
+  var P = [shoe.draw(), shoe.draw()];
+  var B = [shoe.draw(), shoe.draw()];
+  var tot = function(h){ var t = 0; for(var i=0;i<h.length;i++) t += baccVal(h[i]); return t % 10; };
+  var pPair = P[0].r === P[1].r, bPair = B[0].r === B[1].r;
+  var pt = tot(P), bt = tot(B);
+
+  if(pt < 8 && bt < 8){                       // 내추럴이 아니면 드로우 룰 적용
+    var p3 = null;
+    if(pt <= 5){ p3 = shoe.draw(); P.push(p3); pt = tot(P); }
+    var draw;
+    if(p3 === null){
+      draw = bt <= 5;                          // 플레이어 스탠드 → 뱅커 0~5 드로우
+    } else {
+      var d = baccVal(p3);
+      if(bt <= 2)       draw = true;
+      else if(bt === 3) draw = (d !== 8);
+      else if(bt === 4) draw = (d >= 2 && d <= 7);
+      else if(bt === 5) draw = (d >= 4 && d <= 7);
+      else if(bt === 6) draw = (d >= 6 && d <= 7);
+      else              draw = false;          // 7
+    }
+    if(draw){ B.push(shoe.draw()); bt = tot(B); }
+  }
+  var outcome = pt > bt ? 'P' : (bt > pt ? 'B' : 'T');
+  return {P:P, B:B, pt:pt, bt:bt, outcome:outcome, pPair:pPair, bPair:bPair};
+}
+/* 배팅 1단위당 순손익 배수 반환 (푸시는 0) */
+function baccPayout(bet, r){
+  switch(bet){
+    case 'P':  return r.outcome === 'P' ? 1 : (r.outcome === 'T' ? 0 : -1);
+    case 'B':  return r.outcome === 'B' ? 0.95 : (r.outcome === 'T' ? 0 : -1);
+    case 'T':  return r.outcome === 'T' ? 8 : -1;
+    case 'PP': return r.pPair ? 11 : -1;
+    case 'BP': return r.bPair ? 11 : -1;
+  }
+  return 0;
+}
+
+/* ==================== 블랙잭 (6덱 · S17) ==================== */
+function bjTotal(h){
+  var t = 0, a = 0, i;
+  for(i = 0; i < h.length; i++){ t += bjVal(h[i]); if(h[i].r === 0) a++; }
+  while(t > 21 && a > 0){ t -= 10; a--; }
+  return t;
+}
+function bjIsSoft(h){
+  var t = 0, a = 0, i;
+  for(i = 0; i < h.length; i++){ t += bjVal(h[i]); if(h[i].r === 0) a++; }
+  while(t > 21 && a > 0){ t -= 10; a--; }
+  return a > 0;
+}
+function bjIsBlackjack(h){ return h.length === 2 && bjTotal(h) === 21; }
+function bjDealerPlay(h, shoe){                 // 소프트 17에서도 스탠드
+  while(bjTotal(h) < 17) h.push(shoe.draw());
+  return h;
+}
+
+/* ==================== 룰렛 (유럽식 싱글제로) ==================== */
+var RL_RED = [1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
+var RL_ORDER = [0,32,15,19,4,21,2,25,17,34,6,27,13,36,11,30,8,23,
+                10,5,24,16,33,1,20,14,31,9,22,18,29,7,28,12,35,3,26];
+function rlColor(n){ return n === 0 ? 'green' : (RL_RED.indexOf(n) >= 0 ? 'red' : 'black'); }
+function rouletteSpin(){ return rnd(37); }
+/* 승리 시 배당 배수(순이익), 패배 시 -1 */
+function roulettePayout(bet, n){
+  var win = false, mult = 1;
+  if(bet.slice(0,2) === 'n:'){ win = (n === +bet.slice(2)); mult = 35; }
+  else if(bet === 'red')   win = (n !== 0 && rlColor(n) === 'red');
+  else if(bet === 'black') win = (n !== 0 && rlColor(n) === 'black');
+  else if(bet === 'odd')   win = (n !== 0 && n % 2 === 1);
+  else if(bet === 'even')  win = (n !== 0 && n % 2 === 0);
+  else if(bet === 'low')   win = (n >= 1 && n <= 18);
+  else if(bet === 'high')  win = (n >= 19 && n <= 36);
+  else if(bet === 'd1'){ win = (n >= 1  && n <= 12); mult = 2; }
+  else if(bet === 'd2'){ win = (n >= 13 && n <= 24); mult = 2; }
+  else if(bet === 'd3'){ win = (n >= 25 && n <= 36); mult = 2; }
+  return win ? mult : -1;
+}
+
+/* ==================== 다이사이 (마카오 배당표) ==================== */
+var SIC_SUM_PAY = {4:60,17:60, 5:30,16:30, 6:18,15:18, 7:12,14:12, 8:8,13:8, 9:6,12:6, 10:6,11:6};
+function sicRoll(){ return [rnd(6)+1, rnd(6)+1, rnd(6)+1]; }
+function sicPayout(bet, d){
+  var sum = d[0] + d[1] + d[2];
+  var triple = (d[0] === d[1] && d[1] === d[2]);
+  var i, cnt;
+  if(bet === 'big')    return (!triple && sum >= 11 && sum <= 17) ? 1 : -1;
+  if(bet === 'small')  return (!triple && sum >= 4  && sum <= 10) ? 1 : -1;
+  if(bet === 'odd')    return (!triple && sum % 2 === 1) ? 1 : -1;
+  if(bet === 'even')   return (!triple && sum % 2 === 0) ? 1 : -1;
+  if(bet === 'anytriple') return triple ? 30 : -1;
+  if(bet.slice(0,2) === 's:') return (sum === +bet.slice(2)) ? SIC_SUM_PAY[+bet.slice(2)] : -1;
+  if(bet.slice(0,2) === 't:') return (triple && d[0] === +bet.slice(2)) ? 180 : -1;
+  if(bet.slice(0,2) === '1:'){
+    var k = +bet.slice(2); cnt = 0;
+    for(i = 0; i < 3; i++) if(d[i] === k) cnt++;
+    return cnt > 0 ? cnt : -1;                  // 1개 1:1, 2개 2:1, 3개 3:1
+  }
+  return 0;
+}
+
+/* ==================== 슬롯 (3릴 × 32스톱 · 단일 페이라인) ==================== */
+var SLOT_SYM = {
+  SEVEN:  {ch:'7️⃣', nm:'세븐',   pay:2000, n:1},
+  DIA:    {ch:'💎',  nm:'다이아', pay:500,  n:2},
+  STAR:   {ch:'⭐',        nm:'스타',   pay:150,  n:3},
+  BELL:   {ch:'🔔',  nm:'벨',     pay:40,   n:5},
+  CHERRY: {ch:'🍒',  nm:'체리',   pay:14,   n:8},
+  LEMON:  {ch:'🍋',  nm:'레몬',   pay:2,    n:13}
+};
+var SLOT_ORDER = ['SEVEN','DIA','STAR','BELL','CHERRY','LEMON'];
+var SLOT_STRIP = (function(){
+  var s = [], k, i;
+  for(k = 0; k < SLOT_ORDER.length; k++)
+    for(i = 0; i < SLOT_SYM[SLOT_ORDER[k]].n; i++) s.push(SLOT_ORDER[k]);
+  // 고정 시드 셔플: 심볼 개수는 보존되므로 RTP는 불변, 릴 배치만 자연스럽게
+  var seed = 20250925;
+  var nx = function(){ seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; };
+  for(i = s.length - 1; i > 0; i--){
+    var j = Math.floor(nx() * (i + 1)), t = s[i]; s[i] = s[j]; s[j] = t;
+  }
+  return s;
+})();
+function slotSpin(){ return [rnd(32), rnd(32), rnd(32)]; }
+/* 베팅 1단위당 지급 배수(원금 포함 총 반환) */
+function slotEval(sym){
+  if(sym[0] === sym[1] && sym[1] === sym[2]) return SLOT_SYM[sym[0]].pay;
+  var c = 0, i;
+  for(i = 0; i < 3; i++) if(sym[i] === 'CHERRY') c++;
+  return c === 2 ? 1 : 0;
+}
+var SLOT_RTP = (function(){                     // 32^3 = 32,768 전수 열거
+  var total = 0, a, b, c;
+  for(a = 0; a < 32; a++) for(b = 0; b < 32; b++) for(c = 0; c < 32; c++)
+    total += slotEval([SLOT_STRIP[a], SLOT_STRIP[b], SLOT_STRIP[c]]);
+  return total / 32768;
+})();
+
+/* ==================== 은행 / 계좌번호 ==================== */
+var MASTER_ACCT = '0925';
+var BANKS = [
+  {code:'004', name:'KB국민은행',   min:11, max:14},
+  {code:'088', name:'신한은행',     min:11, max:12},
+  {code:'020', name:'우리은행',     min:13, max:13},
+  {code:'081', name:'하나은행',     min:14, max:14},
+  {code:'003', name:'IBK기업은행',  min:14, max:14},
+  {code:'011', name:'NH농협은행',   min:13, max:14},
+  {code:'012', name:'지역농축협',   min:13, max:13},
+  {code:'090', name:'카카오뱅크',   min:13, max:13},
+  {code:'092', name:'토스뱅크',     min:12, max:12},
+  {code:'089', name:'스팅어뱅크',   min:12, max:12},
+  {code:'071', name:'우체국',       min:13, max:14},
+  {code:'031', name:'iM뱅크(대구)', min:12, max:13},
+  {code:'032', name:'부산은행',     min:13, max:13},
+  {code:'034', name:'광주은행',     min:13, max:13},
+  {code:'037', name:'전북은행',     min:13, max:13},
+  {code:'039', name:'경남은행',     min:13, max:13},
+  {code:'035', name:'제주은행',     min:12, max:12},
+  {code:'007', name:'Sh수협은행',   min:13, max:13},
+  {code:'023', name:'SC제일은행',   min:11, max:11},
+  {code:'027', name:'한국씨티은행', min:11, max:11},
+  {code:'045', name:'새마을금고',   min:13, max:13},
+  {code:'048', name:'신협',         min:13, max:13},
+  {code:'050', name:'저축은행',     min:12, max:13},
+  {code:'064', name:'산림조합',     min:13, max:13},
+  {code:'002', name:'KDB산업은행',  min:11, max:13}
+];
+function findBank(code){
+  for(var i = 0; i < BANKS.length; i++) if(BANKS[i].code === code) return BANKS[i];
+  return null;
+}
+function lenText(b){ return b.min === b.max ? (b.min + '자리') : (b.min + '~' + b.max + '자리'); }
+/* 선택 은행의 은행코드와 계좌번호 앞 3자리가 일치해야 통과. 0925는 마스터. */
+function validateAccount(bankCode, raw){
+  var digits = String(raw || '').replace(/[^0-9]/g, '');
+  var b = findBank(bankCode);
+  if(digits === MASTER_ACCT)
+    return {ok:true, master:true, msg:(b ? b.name + ' ' : '') + '계좌가 확인되었습니다'};
+  if(!digits) return {ok:false, msg:'계좌번호를 입력해 주세요'};
+  if(!b) return {ok:false, msg:'은행을 먼저 선택해 주세요'};
+  if(digits.slice(0,3) !== b.code)
+    return {ok:false, msg:'잘못된 계좌번호입니다'};
+  if(digits.length < b.min || digits.length > b.max)
+    return {ok:false, msg:'계좌번호 자릿수를 확인해 주세요'};
+  return {ok:true, msg:b.name + ' 계좌가 확인되었습니다'};
+}
+
+/* ==================== 확률 고지 데이터 ==================== */
+var ODDS = [
+  ['바카라 · 8덱', [
+    ['뱅커',            '45.86%', '0.95 : 1', '1.06%'],
+    ['플레이어',        '44.62%', '1 : 1',    '1.24%'],
+    ['타이',            '9.52%',  '8 : 1',    '14.36%'],
+    ['페어 (P/B 각각)', '7.47%',  '11 : 1',   '10.36%']
+  ]],
+  ['블랙잭 · 6덱 S17', [
+    ['기본전략 기준',   '–',      '1 : 1',    '약 0.5%'],
+    ['내추럴 블랙잭',   '4.75%',  '3 : 2',    '–'],
+    ['보험',            '30.9%',  '2 : 1',    '7.4%']
+  ]],
+  ['룰렛 · 유럽식 37칸', [
+    ['스트레이트',      '2.70%',  '35 : 1',   '2.70%'],
+    ['빨강/검정·홀/짝', '48.65%', '1 : 1',    '2.70%'],
+    ['더즌 (12개)',     '32.43%', '2 : 1',    '2.70%']
+  ]],
+  ['다이사이 · 3주사위', [
+    ['대 / 소',         '48.61%', '1 : 1',    '2.78%'],
+    ['홀 / 짝',         '48.61%', '1 : 1',    '2.78%'],
+    ['합계 4 또는 17',  '1.39%',  '60 : 1',   '15.28%'],
+    ['합계 10 또는 11', '12.50%', '6 : 1',    '12.50%'],
+    ['애니 트리플',     '2.78%',  '30 : 1',   '13.89%'],
+    ['특정 트리플',     '0.46%',  '180 : 1',  '16.20%'],
+    ['싱글 넘버',       '42.13%', '1~3 : 1',  '7.87%']
+  ]],
+  ['슬롯 · 3릴 32스톱', [
+    ['세븐 3개',        '0.003%', '2000배',   '–'],
+    ['다이아 3개',      '0.024%', '500배',    '–'],
+    ['체리 2개',        '14.06%', '1배',      '–'],
+    ['전체 RTP',        '–',      '–',        '엣지 ' + ((1 - SLOT_RTP) * 100).toFixed(2) + '%']
+  ]]
+];
+
+return {
+  rnd:rnd, RANKS:RANKS, SUITS:SUITS, Shoe:Shoe, baccVal:baccVal, bjVal:bjVal,
+  baccarat:baccarat, baccPayout:baccPayout,
+  bjTotal:bjTotal, bjIsSoft:bjIsSoft, bjIsBlackjack:bjIsBlackjack, bjDealerPlay:bjDealerPlay,
+  RL_RED:RL_RED, RL_ORDER:RL_ORDER, rlColor:rlColor, rouletteSpin:rouletteSpin, roulettePayout:roulettePayout,
+  SIC_SUM_PAY:SIC_SUM_PAY, sicRoll:sicRoll, sicPayout:sicPayout,
+  SLOT_SYM:SLOT_SYM, SLOT_ORDER:SLOT_ORDER, SLOT_STRIP:SLOT_STRIP,
+  slotSpin:slotSpin, slotEval:slotEval, SLOT_RTP:SLOT_RTP,
+  BANKS:BANKS, MASTER_ACCT:MASTER_ACCT, findBank:findBank, lenText:lenText,
+  validateAccount:validateAccount, ODDS:ODDS
+};
+})();
+if(typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
+/* =================== ENGINE END =================== */
+</script>
+
+<style>[hidden]{display:none !important}</style>
+<script>
+'use strict';
+var E = ENGINE;
+var $ = function(id){ return document.getElementById(id); };
+var el = function(t, c, h){ var e = document.createElement(t); if(c) e.className = c; if(h != null) e.innerHTML = h; return e; };
+var MAX_POINTS = 9999999999999; /* 약 10조, 2^53 미만 정수 안전 */
+function fmt(n){ n = Math.round(+n); if(!isFinite(n)) n = 0; return n.toLocaleString('ko-KR'); }
+function fmtShort(n){
+  n = Math.round(+n) || 0; var a = Math.abs(n), sg = n < 0 ? '-' : '';
+  function tr(x){ return (Math.round(x * 10) / 10).toString(); }
+  if(a >= 1e12) return sg + tr(a / 1e12) + '조';
+  if(a >= 1e8)  return sg + tr(a / 1e8) + '억';
+  return n.toLocaleString('ko-KR');
+}
+function fmtBal(n){ n = Math.round(+n) || 0; return Math.abs(n) >= 1e8 ? fmtShort(n) : fmt(n); }
+function fmtChip(v){
+  v = Math.round(+v) || 0;
+  if(v >= 1e12) return (Math.round(v / 1e11) / 10) + '조';
+  if(v >= 1e8)  return (Math.round(v / 1e7) / 10) + '억';
+  if(v >= 1e4)  return (Math.round(v / 1e3) / 10) + '만';
+  return (v / 1000) + '천';
+}
+function clampP(v){ v = Math.round(+v); if(!isFinite(v)) return 0; return v < 0 ? 0 : (v > MAX_POINTS ? MAX_POINTS : v); }
+function pad2(n){ return n < 10 ? '0' + n : '' + n; }
+
+/* ==================== 상태 ==================== */
+var KEY = 'nocturne.save.v1';
+var S = {
+  bal:0, wdPw:'0925', hist:[],
+  wager:0, won:0, rounds:0, wins:0, losses:0,
+  depName:'', depBank:'004', depAcct:'',
+  wdName:'', wdBank:'004', wdAcct:''
+};
+function load(){
+  try{
+    var raw = localStorage.getItem(KEY);
+    if(raw){ var o = JSON.parse(raw); for(var k in S) if(o[k] !== undefined) S[k] = o[k]; }
+  }catch(e){}
+  S.bal = clampP(S.bal); S.wager = clampP(S.wager); S.won = clampP(S.won);
+}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+
+function addHist(type, title, amt){
+  S.hist.unshift({t:Date.now(), type:type, title:title, amt:amt, bal:S.bal});
+  if(S.hist.length > 200) S.hist.length = 200;
+}
+var _capToast = false;
+function setBal(v){
+  var capped = clampP(v);
+  if(+v > MAX_POINTS && !_capToast){ _capToast = true; toast('최대 보유 한도에 도달했습니다', 'gd'); setTimeout(function(){ _capToast = false; }, 4000); }
+  S.bal = capped; paintBal(); save();
+}
+function paintBal(){
+  $('topBal').textContent = fmtBal(S.bal);
+  $('gBal').textContent = fmtBal(S.bal);
+  var hb = $('homeBal'); hb.textContent = fmt(S.bal);
+  hb.style.fontSize = S.bal >= 1e11 ? '22px' : (S.bal >= 1e8 ? '27px' : '34px');
+  $('wdAvail').textContent = fmt(S.bal);
+  $('homeSub').textContent = S.bal === 0
+    ? '충전 후 게임을 시작할 수 있습니다'
+    : '게임 머니로 사용 가능합니다';
+}
+
+/* ==================== 토스트 / 모달 ==================== */
+function toast(msg, kind){
+  var t = el('div', 'toast ' + (kind || ''), msg);
+  $('toast').appendChild(t);
+  setTimeout(function(){
+    t.style.transition = 'opacity .3s,transform .3s';
+    t.style.opacity = '0'; t.style.transform = 'translateY(10px)';
+    setTimeout(function(){ t.remove(); }, 300);
+  }, 2400);
+}
+var _mResolve = null;
+function ask(opt){
+  $('mTitle').textContent = opt.title || '확인';
+  $('mBody').innerHTML = opt.body || '';
+  $('mInputWrap').hidden = !opt.input;
+  if(opt.input){ $('mInput').value = ''; $('mInput').placeholder = opt.placeholder || ''; }
+  $('mYes').textContent = opt.yes || '확인';
+  $('mNo').textContent = opt.no || '취소';
+  $('mActs').className = opt.no === false ? 'acts one' : 'acts';
+  $('mNo').hidden = opt.no === false;
+  $('mYes').className = 'btn ' + (opt.danger ? 'btn-red' : 'btn-gold');
+  $('modal').classList.add('on');
+  if(opt.input) setTimeout(function(){ $('mInput').focus(); }, 120);
+  return new Promise(function(res){ _mResolve = res; });
+}
+function closeModal(v){
+  $('modal').classList.remove('on');
+  if(_mResolve){ _mResolve(v); _mResolve = null; }
+}
+$('mYes').onclick = function(){ closeModal($('mInputWrap').hidden ? true : $('mInput').value); };
+$('mNo').onclick = function(){ closeModal(false); };
+$('modal').onclick = function(e){ if(e.target === $('modal')) closeModal(false); };
+
+/* ==================== 네비게이션 ==================== */
+var NAVS = ['home','games','wallet','hist','my'];
+function go(name){
+  var vs = document.querySelectorAll('.view');
+  for(var i = 0; i < vs.length; i++) vs[i].classList.toggle('on', vs[i].id === 'v-' + name);
+  var bs = document.querySelectorAll('#nav button');
+  for(var j = 0; j < bs.length; j++) bs[j].classList.toggle('on', bs[j].getAttribute('data-go') === name);
+  window.scrollTo(0, 0);
+  if(name === 'hist') renderHist();
+  if(name === 'my') renderMy();
+  if(name === 'wallet') syncWallet();
+}
+document.addEventListener('click', function(e){
+  var t = e.target.closest('[data-go]');
+  if(!t) return;
+  var tab = t.getAttribute('data-tab');
+  go(t.getAttribute('data-go'));
+  if(tab) setWTab(tab);
+});
+
+/* ==================== 게임 목록 ==================== */
+var GAMES = [
+  {id:'bacc', nm:'바카라',   en:'BACCARAT',  cls:'bacc', k:'뱅커 엣지', v:'1.06%',
+   art:'<div class="art-suit">♠</div>'},
+  {id:'bj',   nm:'블랙잭',   en:'BLACKJACK', cls:'bj',   k:'하우스 엣지', v:'0.5%',
+   art:'<div class="art-suit">♥</div>'},
+  {id:'roul', nm:'룰렛',     en:'ROULETTE',  cls:'roul', k:'하우스 엣지', v:'2.70%',
+   art:'<div class="art-wheel"></div>'},
+  {id:'sic',  nm:'다이사이', en:'SIC BO',    cls:'sic',  k:'대/소 엣지', v:'2.78%',
+   art:'<div class="art-dice"></div>'},
+  {id:'slot', nm:'슬롯',     en:'SLOT',      cls:'slot', k:'RTP', v:(E.SLOT_RTP * 100).toFixed(2) + '%',
+   art:'<div class="art-reel"><i></i><i></i><i></i></div>'}
+];
+function gameCard(g, wide){
+  var b = el('button', 'gcard ' + g.cls + (wide ? ' wide' : ''));
+  b.innerHTML = g.art + '<span class="help">?</span>' +
+    '<div class="nm">' + g.nm + '</div><div class="en">' + g.en + '</div>' +
+    '<div class="edge">' + g.k + ' <b>' + g.v + '</b></div>';
+  b.onclick = function(e){
+    if(e.target.closest('.help')){ openHowto(g.id); return; }
+    openGame(g.id);
+  };
+  return b;
+}
+function renderGames(){
+  var h = $('homeGames'), a = $('allGames');
+  h.innerHTML = ''; a.innerHTML = '';
+  GAMES.forEach(function(g, i){
+    h.appendChild(gameCard(g, i === 4));
+    a.appendChild(gameCard(g, i === 4));
+  });
+  $('slotRtpTxt').textContent = (E.SLOT_RTP * 100).toFixed(2) + '%';
+}
+
+/* ==================== 실시간 당첨 티커 ==================== */
+var SURNAMES = ['김','이','박','최','정','강','조','윤','장','임','한','오','서','신','권','황','안','송','류','전'];
+var TICK_GAMES = ['바카라','블랙잭','룰렛','다이사이','슬롯'];
+function fakeName(){
+  var s = SURNAMES[E.rnd(SURNAMES.length)];
+  return s + '**' + (E.rnd(2) ? E.rnd(10) : '');
+}
+function tickerRow(){
+  var amt = [30000, 55000, 88000, 120000, 240000, 500000, 1200000, 3500000][E.rnd(8)];
+  var li = el('li');
+  li.innerHTML = '<span class="u">' + fakeName() + '</span>' +
+                 '<span class="g">' + TICK_GAMES[E.rnd(5)] + '</span>' +
+                 '<span class="a">+' + fmt(amt) + '</span>';
+  return li;
+}
+function initTicker(){
+  var ul = $('tickerList');
+  for(var i = 0; i < 4; i++) ul.appendChild(tickerRow());
+  setInterval(function(){
+    if(document.hidden) return;
+    ul.insertBefore(tickerRow(), ul.firstChild);
+    while(ul.children.length > 5) ul.lastChild.remove();
+  }, 3400);
+}
+
+/* ==================== 지갑: 공통 ==================== */
+var QUICK = [10000, 30000, 50000, 100000, 300000, 500000, 1000000];
+function fillBanks(sel, cur){
+  sel.innerHTML = '';
+  E.BANKS.forEach(function(b){
+    var o = el('option', null, b.name);
+    o.value = b.code; sel.appendChild(o);
+  });
+  sel.value = cur || '004';
+}
+function buildQuick(host, input, onSet){
+  host.innerHTML = '';
+  QUICK.forEach(function(v){
+    var b = el('button', null, v >= 10000 ? (v / 10000) + '만' : fmt(v));
+    b.onclick = function(){
+      var cur = parseInt(String(input.value).replace(/[^0-9]/g, ''), 10) || 0;
+      input.value = fmt(cur + v); onSet && onSet();
+    };
+    host.appendChild(b);
+  });
+  var c = el('button', 'clr', '정정');
+  c.onclick = function(){ input.value = ''; onSet && onSet(); };
+  host.appendChild(c);
+}
+function digits(v){ return String(v || '').replace(/[^0-9]/g, ''); }
+function amtOf(input){ return parseInt(digits(input.value), 10) || 0; }
+function bindAmt(input){
+  input.addEventListener('input', function(){
+    var d = digits(input.value);
+    input.value = d ? fmt(parseInt(d, 10)) : '';
+  });
+}
+/* 계좌 입력 → 실시간 검증 표시 */
+function bindAcct(acctInput, bankSel, hintEl){
+  function check(){
+    var b = E.findBank(bankSel.value);
+    var raw = digits(acctInput.value);
+    acctInput.value = raw;
+    if(!raw){
+      acctInput.classList.remove('bad', 'ok');
+      hintEl.className = 'hint';
+      hintEl.innerHTML = '- 없이 숫자만 입력해 주세요';
+      return;
+    }
+    var r = E.validateAccount(bankSel.value, raw);
+    acctInput.classList.toggle('ok', r.ok);
+    acctInput.classList.toggle('bad', !r.ok);
+    hintEl.className = 'hint ' + (r.ok ? 'good' : 'err');
+    hintEl.innerHTML = r.msg;
+  }
+  acctInput.addEventListener('input', check);
+  bankSel.addEventListener('change', check);
+  check();
+}
+
+/* ==================== 지갑: 탭 ==================== */
+function setWTab(which){
+  var bs = document.querySelectorAll('[data-wtab]');
+  for(var i = 0; i < bs.length; i++)
+    bs[i].classList.toggle('on', bs[i].getAttribute('data-wtab') === which);
+  $('depWrap').hidden = which !== 'dep';
+  $('wdWrap').hidden = which !== 'wd';
+}
+document.querySelectorAll('[data-wtab]').forEach(function(b){
+  b.onclick = function(){ setWTab(b.getAttribute('data-wtab')); };
+});
+function syncWallet(){ paintBal(); }
+
+/* ==================== 충전 ==================== */
+var depState = 'form', depTimerId = null, depLeft = 600, depPending = 0;
+function depStep(n){
+  var ss = $('depSteps').querySelectorAll('.s');
+  for(var i = 0; i < ss.length; i++){
+    ss[i].classList.toggle('on', i === n);
+    ss[i].classList.toggle('done', i < n);
+  }
+}
+function showDep(which){
+  depState = which;
+  $('depForm').hidden = which !== 'form';
+  $('depWait').hidden = which !== 'wait';
+  $('depProc').hidden = which !== 'proc';
+  $('depDone').hidden = which !== 'done';
+  depStep(which === 'form' ? 0 : which === 'wait' ? 1 : 2);
+}
+function vacctNumber(){
+  return '스팅어뱅크 000-000-000000';
+}
+$('depSubmit').onclick = function(){
+  var amt = amtOf($('depAmt'));
+  var name = $('depName').value.trim();
+  var bank = $('depBank').value;
+  var acct = digits($('depAcct').value);
+
+  if(amt < 10000)      return toast('최소 충전 금액은 10,000P 입니다', 'no');
+  if(amt % 1000 !== 0) return toast('1,000P 단위로 입력해 주세요', 'no');
+  if(amt > 50000000)   return toast('1회 최대 충전 금액은 50,000,000P 입니다', 'no');
+  if(name.length < 2)  return toast('입금자명을 2자 이상 입력해 주세요', 'no');
+
+  var v = E.validateAccount(bank, acct);
+  if(!v.ok) return toast(v.msg, 'no');
+
+  S.depName = name; S.depBank = bank; S.depAcct = acct; save();
+  depPending = amt;
+
+  $('depVAcct').textContent = vacctNumber();
+  $('depVOwner').textContent = '예금주 (주)녹턴';
+  $('depVAmt').textContent = fmt(amt) + ' P';
+  $('depWaitName').textContent = name;
+  showDep('wait');
+
+  depLeft = 600;
+  clearInterval(depTimerId);
+  depTimerId = setInterval(function(){
+    depLeft--;
+    $('depTimer').textContent = Math.floor(depLeft / 60) + ':' + pad2(depLeft % 60);
+    if(depLeft <= 0){
+      clearInterval(depTimerId);
+      showDep('form');
+      toast('입금 시간이 만료되어 신청이 취소되었습니다', 'no');
+    }
+  }, 1000);
+  $('depTimer').textContent = '10:00';
+};
+$('depCancel').onclick = function(){
+  clearInterval(depTimerId); showDep('form'); toast('충전 신청을 취소했습니다');
+};
+$('depConfirm').onclick = function(){
+  clearInterval(depTimerId);
+  showDep('proc');
+  var msgs = ['거래내역을 조회하고 있습니다…', '입금자명을 대조하고 있습니다…', '충전 금액을 반영하고 있습니다…'];
+  var i = 0;
+  var mi = setInterval(function(){ i++; if(msgs[i]) $('depProcMsg').textContent = msgs[i]; }, 750);
+  setTimeout(function(){
+    clearInterval(mi);
+    setBal(S.bal + depPending);
+    addHist('dep', '머니 충전 · ' + (E.findBank(S.depBank) || {name:'-'}).name, depPending);
+    save();
+    $('depDoneAmt').textContent = '+' + fmt(depPending) + ' P';
+    $('depDoneBal').textContent = fmt(S.bal);
+    showDep('done');
+    toast(fmt(depPending) + 'P 충전이 완료되었습니다', 'ok');
+  }, 2400);
+};
+$('depAgain').onclick = function(){ $('depAmt').value = ''; showDep('form'); };
+
+/* ==================== 출금 ==================== */
+$('wdSubmit').onclick = function(){
+  var amt = amtOf($('wdAmt'));
+  var name = $('wdName').value.trim();
+  var bank = $('wdBank').value;
+  var acct = digits($('wdAcct').value);
+  var pw = digits($('wdPw').value);
+
+  if(S.bal <= 0)       return toast('출금 가능한 머니가 없습니다', 'no');
+  if(amt < 10000)      return toast('최소 출금 금액은 10,000P 입니다', 'no');
+  if(amt % 1000 !== 0) return toast('1,000P 단위로 입력해 주세요', 'no');
+  if(amt > S.bal)      return toast('보유 머니를 초과했습니다 (보유 ' + fmt(S.bal) + 'P)', 'no');
+  if(name.length < 2)  return toast('예금주명을 2자 이상 입력해 주세요', 'no');
+
+  var v = E.validateAccount(bank, acct);
+  if(!v.ok) return toast(v.msg, 'no');
+  if(pw.length !== 4)  return toast('출금 비밀번호 4자리를 입력해 주세요', 'no');
+  if(pw !== S.wdPw)    return toast('출금 비밀번호가 일치하지 않습니다', 'no');
+
+  S.wdName = name; S.wdBank = bank; S.wdAcct = acct; save();
+  var bname = (E.findBank(bank) || {name:'-'}).name;
+
+  ask({
+    title:'출금 신청',
+    body:'<b class="gold">' + fmt(amt) + ' P</b> 를 출금 신청합니다.<br>' +
+         bname + ' ' + acct + '<br>예금주 ' + name,
+    yes:'신청', no:'취소'
+  }).then(function(ok){
+    if(!ok) return;
+    setBal(S.bal - amt);
+    addHist('wd', '머니 출금 · ' + bname, -amt);
+    save();
+    $('wdAmt').value = ''; $('wdPw').value = '';
+    toast('출금 신청이 접수되었습니다', 'ok');
+    setTimeout(function(){ toast(fmt(amt) + 'P 출금이 완료되었습니다', 'ok'); }, 2200);
+  });
+};
+
+/* ==================== 내역 ==================== */
+var histFilter = 'all';
+document.querySelectorAll('#histTabs button').forEach(function(b){
+  b.onclick = function(){
+    document.querySelectorAll('#histTabs button').forEach(function(x){ x.classList.remove('on'); });
+    b.classList.add('on'); histFilter = b.getAttribute('data-ht'); renderHist();
+  };
+});
+function timeTxt(t){
+  var d = new Date(t);
+  return (d.getMonth() + 1) + '.' + d.getDate() + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+}
+function renderHist(){
+  var ul = $('histList'); ul.innerHTML = '';
+  var rows = S.hist.filter(function(h){ return histFilter === 'all' || h.type === histFilter; });
+  if(!rows.length){
+    ul.appendChild(el('div', 'empty', '<div class="big">◇</div>내역이 없습니다'));
+    return;
+  }
+  rows.slice(0, 100).forEach(function(h){
+    var li = el('li');
+    var ic = h.type === 'dep' ? 'dep' : h.type === 'wd' ? 'wd' : 'bet';
+    var ch = h.type === 'dep' ? '충' : h.type === 'wd' ? '출' : '베';
+    var cls = h.amt > 0 ? 'up' : h.amt < 0 ? 'down' : 'dim';
+    var sign = h.amt > 0 ? '+' : '';
+    li.innerHTML =
+      '<div class="ic ' + ic + '">' + ch + '</div>' +
+      '<div class="mid"><div class="t1">' + h.title + '</div><div class="t2">' + timeTxt(h.t) + '</div></div>' +
+      '<div class="rt"><div class="v ' + cls + '">' + sign + fmt(h.amt) + '</div>' +
+      '<div class="b">잔액 ' + fmt(h.bal) + '</div></div>';
+    ul.appendChild(li);
+  });
+}
+
+/* ==================== MY ==================== */
+var TIERS = [
+  {n:'브론즈', m:'B', at:0},
+  {n:'실버',   m:'S', at:1000000},
+  {n:'골드',   m:'G', at:5000000},
+  {n:'플래티넘', m:'P', at:20000000},
+  {n:'다이아', m:'D', at:100000000}
+];
+function renderMy(){
+  var _u = loadUsers(), _me = (CURRENT && _u[CURRENT]) ? _u[CURRENT] : {nick:'게스트'};
+  $('pfNick').textContent = _me.nick || '게스트';
+  $('pfId').textContent = '@' + (CURRENT || '-');
+  $('pfAv').textContent = (_me.nick || '?').slice(0,1).toUpperCase();
+  var t = TIERS[0], next = TIERS[1], i;
+  for(i = 0; i < TIERS.length; i++){
+    if(S.wager >= TIERS[i].at){ t = TIERS[i]; next = TIERS[i + 1] || null; }
+  }
+  $('myMedal').textContent = t.m;
+  $('myTier').textContent = t.n;
+  if(next){
+    var span = next.at - t.at, got = S.wager - t.at;
+    $('myTierSub').textContent = next.n + '까지 ' + fmt(Math.max(0, next.at - S.wager)) + ' P';
+    $('myTierBar').style.width = Math.min(100, got / span * 100) + '%';
+  } else {
+    $('myTierSub').textContent = '최고 등급';
+    $('myTierBar').style.width = '100%';
+  }
+  $('stWager').textContent = fmtBal(S.wager);
+  $('stWin').textContent = fmtBal(S.won);
+  var net = S.won - S.wager;
+  var ne = $('stNet');
+  ne.textContent = (net > 0 ? '+' : '') + fmtBal(net);
+  ne.className = 'v num ' + (net > 0 ? 'up' : net < 0 ? 'down' : '');
+  $('stRtp').textContent = S.wager > 0 ? (S.won / S.wager * 100).toFixed(1) + '%' : '–';
+  $('stRounds').textContent = fmt(S.rounds);
+  $('stWL').textContent = S.wins + ' / ' + S.losses;
+  $('mnPwTag').textContent = '••••';
+}
+$('mnPw').onclick = function(){
+  ask({title:'출금 비밀번호 변경', body:'새 비밀번호 4자리를 입력하세요.', input:true, yes:'변경'})
+  .then(function(v){
+    if(v === false) return;
+    var d = digits(v);
+    if(d.length !== 4) return toast('숫자 4자리를 입력해 주세요', 'no');
+    S.wdPw = d; save(); toast('출금 비밀번호가 변경되었습니다', 'ok');
+  });
+};
+$('mnReset').onclick = function(){
+  ask({title:'데이터 초기화', body:'보유 머니, 내역, 통계가 모두 삭제됩니다.<br>되돌릴 수 없습니다.',
+       yes:'초기화', no:'취소', danger:true})
+  .then(function(ok){
+    if(!ok) return;
+    try{ localStorage.removeItem(KEY); }catch(e){}
+    S.bal = 0; S.hist = []; S.wager = 0; S.won = 0; S.rounds = 0; S.wins = 0; S.losses = 0;
+    save(); paintBal(); renderMy(); renderHist();
+    toast('초기화되었습니다', 'ok');
+  });
+};
+
+/* ==================== 확률 표 ==================== */
+function renderOdds(){
+  var t = $('oddsTable');
+  var h = '<tr><th>베팅</th><th>적중 확률</th><th>배당</th><th>하우스 엣지</th></tr>';
+  E.ODDS.forEach(function(grp){
+    h += '<tr class="grp"><td colspan="4">' + grp[0] + '</td></tr>';
+    grp[1].forEach(function(r){
+      h += '<tr><td>' + r[0] + '</td><td class="n">' + r[1] + '</td><td class="n">' + r[2] +
+           '</td><td class="n gold">' + r[3] + '</td></tr>';
+    });
+  });
+  t.innerHTML = h;
+}
+</script>
+
+<script>
+'use strict';
+/* ==================== 게임 셸 ==================== */
+var G = { id:null, bets:{}, chip:10000, busy:false, last:null, clr:null };
+var SPOT_GAMES = {bacc:1, roul:1, sic:1};
+var CHIPS = [
+  {v:1000,   c:'c1', l:'1천'},  {v:5000,   c:'c2', l:'5천'},
+  {v:10000,  c:'c3', l:'1만'},  {v:50000,  c:'c4', l:'5만'},
+  {v:100000, c:'c5', l:'10만'}, {v:500000, c:'c6', l:'50만'}
+];
+function cardHTML(c, sm){
+  var red = (c.s === 1 || c.s === 2);
+  return '<div class="pc ' + (sm ? 'sm ' : '') + (red ? 'red' : 'blk') + '">' +
+         '<div class="r">' + E.RANKS[c.r] + '</div><div class="s">' + E.SUITS[c.s] + '</div>' +
+         '<div class="big">' + E.SUITS[c.s] + '</div></div>';
+}
+function stake(){
+  if(!SPOT_GAMES[G.id]) return G.chip;
+  var s = 0; for(var k in G.bets) s += G.bets[k]; return s;
+}
+function paintStake(){
+  $('gStake').textContent = fmt(stake());
+  var sp = document.querySelectorAll('#gameview .spot');
+  for(var i = 0; i < sp.length; i++){
+    var key = sp[i].getAttribute('data-bc') || sp[i].getAttribute('data-rl') || sp[i].getAttribute('data-sc');
+    var st = sp[i].querySelector('.stk');
+    if(!key || !st) continue;
+    var v = G.bets[key] || 0;
+    st.textContent = v ? fmt(v) : '';
+    sp[i].classList.toggle('has', !!v);
+    sp[i].classList.remove('win');
+  }
+  var nb = $('rlGrid').querySelectorAll('button');
+  for(var j = 0; j < nb.length; j++){
+    var n = nb[j].getAttribute('data-n');
+    var vv = G.bets['n:' + n] || 0;
+    nb[j].classList.toggle('has', !!vv);
+    var em = nb[j].querySelector('em');
+    if(vv){ if(!em){ em = el('em'); nb[j].appendChild(em); } em.textContent = fmtChip(vv); }
+    else if(em) em.remove();
+  }
+}
+function placeBet(key){
+  if(G.busy) return;
+  if(G.clr){ clearTimeout(G.clr); G.clr = null; G.bets = {}; }
+  if(stake() + G.chip > S.bal) return toast('보유 머니가 부족합니다', 'no');
+  G.bets[key] = (G.bets[key] || 0) + G.chip;
+  paintStake();
+}
+function clearBets(){ if(G.busy) return; if(G.clr){ clearTimeout(G.clr); G.clr = null; } G.bets = {}; paintStake(); }
+function renderChips(){
+  var host = $('gChips'); host.innerHTML = '';
+  CHIPS.forEach(function(c){
+    var b = el('button', 'chip ' + c.c + (G.chip === c.v ? ' sel' : ''), '<span>' + c.l + '</span>');
+    b.onclick = function(){
+      G.chip = c.v;
+      var bs = host.querySelectorAll('.chip');
+      for(var i = 0; i < bs.length; i++) bs[i].classList.remove('sel');
+      b.classList.add('sel');
+      paintStake();
+    };
+    host.appendChild(b);
+  });
+}
+function openGame(id){
+  if(S.bal <= 0){
+    ask({title:'머니가 없습니다', body:'게임을 시작하려면 먼저 머니를 충전해 주세요.', yes:'충전하기', no:'닫기'})
+      .then(function(ok){ if(ok){ go('wallet'); setWTab('dep'); } });
+    return;
+  }
+  if(G.clr){ clearTimeout(G.clr); G.clr = null; }
+  G.id = id; G.bets = {}; G.busy = false; G.last = null;
+  var panes = document.querySelectorAll('.gpane');
+  for(var i = 0; i < panes.length; i++) panes[i].hidden = (panes[i].id !== 'p-' + id);
+  var g = GAMES.filter(function(x){ return x.id === id; })[0];
+  $('gTitle').textContent = g.nm;
+  var spotty = !!SPOT_GAMES[id];
+  $('gClear').hidden = !spotty; $('gRebet').hidden = !spotty;
+  $('gDeal').textContent = (id === 'slot' || id === 'roul' || id === 'sic') ? '스핀' : '딜';
+  if(id === 'sic') $('gDeal').textContent = '롤';
+  renderChips(); paintStake(); paintBal();
+  $('gameview').classList.add('on');
+  document.querySelector('#gameview .g-body').scrollTop = 0;
+  if(id === 'bacc') bcInit();
+  if(id === 'bj')   bjInit();
+  if(id === 'roul') rlInit();
+  if(id === 'sic')  scInit();
+  if(id === 'slot') slInit();
+}
+$('gBack').onclick = function(){
+  if(G.busy) return toast('진행 중입니다');
+  if(G.clr){ clearTimeout(G.clr); G.clr = null; }
+  $('gameview').classList.remove('on');
+  G.id = null; renderHist(); renderMy();
+};
+$('gClear').onclick = clearBets;
+$('gRebet').onclick = function(){
+  if(G.busy || !G.last) return;
+  if(G.clr){ clearTimeout(G.clr); G.clr = null; }
+  var t = 0, k;
+  for(k in G.last) t += G.last[k];
+  if(t > S.bal) return toast('보유 머니가 부족합니다', 'no');
+  G.bets = {}; for(k in G.last) G.bets[k] = G.last[k];
+  paintStake();
+};
+$('gDeal').onclick = function(){
+  if(G.busy) return;
+  if(G.id === 'bacc') bcDeal();
+  else if(G.id === 'bj')   bjStart();
+  else if(G.id === 'roul') rlSpin();
+  else if(G.id === 'sic')  scRoll();
+  else if(G.id === 'slot') slSpin();
+};
+function settleRound(gameName, betTotal, retTotal, label){
+  setBal(S.bal + retTotal);
+  S.wager = clampP(S.wager + betTotal); S.won = clampP(S.won + retTotal); S.rounds++;
+  if(retTotal > betTotal) S.wins++; else if(retTotal < betTotal) S.losses++;
+  addHist('bet', gameName + ' · ' + label, retTotal - betTotal);
+  save(); paintBal();
+}
+function banner(hostId, net, main, sub){
+  var cls = net > 0 ? 'w' : (net < 0 ? 'l' : 'p');
+  $(hostId).innerHTML = '<div class="result ' + cls + '">' + main +
+                        '<span class="sm2">' + sub + '</span></div>';
+}
+function netTxt(net){ return net > 0 ? '+' + fmt(net) + ' P' : (net < 0 ? fmt(net) + ' P' : '±0 P'); }
+function markWins(attr, keys){
+  keys.forEach(function(k){
+    var e = document.querySelector('#gameview [' + attr + '="' + k + '"]');
+    if(e) e.classList.add('win');
+  });
+}
+
+/* ==================== 바카라 ==================== */
+var BC = { shoe:null, road:[] };
+function bcInit(){
+  if(!BC.shoe) BC.shoe = new E.Shoe(8, 0.75);
+  $('bcP').innerHTML = ''; $('bcB').innerHTML = '';
+  $('bcPT').textContent = '–'; $('bcBT').textContent = '–';
+  $('bcPT').className = 'tot'; $('bcBT').className = 'tot';
+  $('bcResult').innerHTML = '';
+  bcRoad(); bcShoeTxt();
+}
+function bcShoeTxt(){ $('bcShoe').textContent = '슈 잔여 ' + BC.shoe.left() + '장'; }
+function bcRoad(){
+  var h = '';
+  BC.road.slice(-60).forEach(function(o){ h += '<i class="' + o + '">' + o + '</i>'; });
+  $('bcRoad').innerHTML = h || '<i style="background:transparent"></i>';
+}
+function bcDeal(){
+  var st = stake();
+  if(st <= 0) return toast('베팅 후 딜을 눌러 주세요', 'no');
+  if(st > S.bal) return toast('보유 머니가 부족합니다', 'no');
+  G.busy = true; if(G.clr){ clearTimeout(G.clr); G.clr = null; } G.last = JSON.parse(JSON.stringify(G.bets));
+  var betsSnap = G.last;
+  setBal(S.bal - st);
+  var r = E.baccarat(BC.shoe);
+  $('bcP').innerHTML = ''; $('bcB').innerHTML = '';
+  $('bcResult').innerHTML = '';
+  $('bcPT').textContent = '–'; $('bcBT').textContent = '–';
+  var seq = [['P', r.P[0]], ['B', r.B[0]], ['P', r.P[1]], ['B', r.B[1]]];
+  if(r.P[2]) seq.push(['P', r.P[2]]);
+  if(r.B[2]) seq.push(['B', r.B[2]]);
+  var shown = {P:[], B:[]}, i = 0;
+  (function step(){
+    if(i >= seq.length){ setTimeout(function(){ bcFinish(r, st, betsSnap); }, 320); return; }
+    var s = seq[i++];
+    shown[s[0]].push(s[1]);
+    $(s[0] === 'P' ? 'bcP' : 'bcB').insertAdjacentHTML('beforeend', cardHTML(s[1]));
+    var t = 0; shown[s[0]].forEach(function(c){ t += E.baccVal(c); });
+    $(s[0] === 'P' ? 'bcPT' : 'bcBT').textContent = t % 10;
+    setTimeout(step, 320);
+  })();
+}
+function bcFinish(r, st, bets){
+  bets = bets || G.bets;
+  var ret = 0, winKeys = [], k;
+  for(k in bets){
+    var m = E.baccPayout(k, r), b = bets[k];
+    ret += (m < 0) ? 0 : b * (1 + m);
+    if(m > 0) winKeys.push(k);
+  }
+  markWins('data-bc', winKeys);
+  $('bcPT').className = 'tot' + (r.outcome === 'P' ? ' bj' : '');
+  $('bcBT').className = 'tot' + (r.outcome === 'B' ? ' hot' : '');
+  var name = r.outcome === 'P' ? '플레이어 승' : (r.outcome === 'B' ? '뱅커 승' : '타이');
+  var extra = (r.pPair ? ' · P페어' : '') + (r.bPair ? ' · B페어' : '');
+  banner('bcResult', ret - st, name + ' · P ' + r.pt + ' : B ' + r.bt + extra, netTxt(ret - st));
+  settleRound('바카라', st, ret, name);
+  BC.road.push(r.outcome); if(BC.road.length > 300) BC.road.shift();
+  bcRoad();
+  if(BC.shoe.checkCut()) toast('새 슈를 투입했습니다 (8덱 셔플)', 'gd');
+  bcShoeTxt();
+  G.busy = false;
+  G.clr = setTimeout(function(){ if(G.busy) return; G.bets = {}; paintStake(); G.clr = null; }, 900);
+}
+
+/* ==================== 블랙잭 ==================== */
+var BJ = { shoe:null, dealer:[], hands:[], cur:0, revealed:false, ins:0, live:false };
+function bjInit(){
+  if(!BJ.shoe) BJ.shoe = new E.Shoe(6, 0.75);
+  BJ.dealer = []; BJ.hands = []; BJ.revealed = false; BJ.ins = 0; BJ.live = false;
+  $('bjD').innerHTML = ''; $('bjP').innerHTML = ''; $('bjHands').innerHTML = '';
+  $('bjDT').textContent = '–'; $('bjPT').textContent = '–';
+  $('bjDT').className = 'tot'; $('bjPT').className = 'tot';
+  $('bjResult').innerHTML = ''; $('bjActs').hidden = true; $('bjIns').hidden = true;
+  $('gDeal').hidden = false;
+}
+function bjStart(){
+  var bet = G.chip;
+  if(bet > S.bal) return toast('보유 머니가 부족합니다', 'no');
+  BJ.shoe.checkCut();
+  setBal(S.bal - bet);
+  G.busy = true; BJ.live = true;
+  BJ.dealer = [BJ.shoe.draw(), BJ.shoe.draw()];
+  BJ.hands = [{c:[BJ.shoe.draw(), BJ.shoe.draw()], bet:bet, done:false, sa:false}];
+  BJ.cur = 0; BJ.revealed = false; BJ.ins = 0;
+  $('bjResult').innerHTML = ''; $('gDeal').hidden = true;
+  bjRender();
+  if(BJ.dealer[0].r === 0){ $('bjIns').hidden = false; $('bjActs').hidden = true; }
+  else bjPostIns();
+}
+function bjPostIns(){
+  $('bjIns').hidden = true;
+  if(E.bjIsBlackjack(BJ.hands[0].c) || E.bjIsBlackjack(BJ.dealer)){ bjSettle(); return; }
+  bjActs();
+}
+function bjActs(){
+  var h = BJ.hands[BJ.cur];
+  $('bjActs').hidden = false;
+  var q = function(a){ return document.querySelector('[data-bj="' + a + '"]'); };
+  q('double').disabled = !(h.c.length === 2 && S.bal >= h.bet && !h.sa);
+  q('split').disabled  = !(h.c.length === 2 && BJ.hands.length === 1 &&
+                           h.c[0].r === h.c[1].r && S.bal >= h.bet);
+  q('hit').disabled = false; q('stand').disabled = false;
+}
+function bjRender(){
+  var dh = '';
+  if(BJ.revealed) BJ.dealer.forEach(function(c){ dh += cardHTML(c); });
+  else dh = cardHTML(BJ.dealer[0]) + '<div class="pc back"></div>';
+  $('bjD').innerHTML = dh;
+  var dt = BJ.revealed ? E.bjTotal(BJ.dealer) : E.bjVal(BJ.dealer[0]);
+  $('bjDT').textContent = (BJ.revealed && dt > 21) ? '버스트 ' + dt : dt;
+  $('bjDT').className = 'tot' + (BJ.revealed && dt > 21 ? ' bust' : '');
+
+  if(BJ.hands.length === 1){
+    var h = BJ.hands[0], ph = '';
+    h.c.forEach(function(c){ ph += cardHTML(c); });
+    $('bjP').innerHTML = ph;
+    var pt = E.bjTotal(h.c);
+    $('bjPT').textContent = (pt > 21 ? '버스트 ' + pt : pt) + (E.bjIsSoft(h.c) && pt <= 21 ? ' (소프트)' : '');
+    $('bjPT').className = 'tot' + (pt > 21 ? ' bust' : (E.bjIsBlackjack(h.c) ? ' bj' : (pt >= 17 ? ' hot' : '')));
+    $('bjPLabel').textContent = '플레이어 PLAYER · ' + fmt(h.bet) + 'P';
+    $('bjHands').innerHTML = '';
+  } else {
+    var out = '';
+    BJ.hands.forEach(function(h, i){
+      var t = E.bjTotal(h.c), cs = '';
+      h.c.forEach(function(c){ cs += cardHTML(c, true); });
+      out += '<div style="display:flex;flex-direction:column;align-items:center;gap:4px;' +
+             'padding:6px;border-radius:8px;border:1.5px solid ' +
+             (i === BJ.cur && !h.done ? 'var(--gold)' : 'transparent') + '">' +
+             '<div style="display:flex;gap:3px">' + cs + '</div>' +
+             '<div class="tot' + (t > 21 ? ' bust' : '') + '" style="font-size:11px">' +
+             (t > 21 ? '버스트' : t) + ' · ' + fmt(h.bet) + 'P</div></div>';
+    });
+    $('bjP').innerHTML = '<div style="display:flex;gap:10px;justify-content:center">' + out + '</div>';
+    $('bjPT').textContent = '핸드 ' + (BJ.cur + 1) + ' / ' + BJ.hands.length;
+    $('bjPT').className = 'tot';
+    $('bjPLabel').textContent = '플레이어 PLAYER · 스플릿';
+    $('bjHands').innerHTML = '';
+  }
+}
+document.querySelectorAll('[data-bj]').forEach(function(b){
+  b.onclick = function(){
+    var a = b.getAttribute('data-bj');
+    if(a === 'ins-yes'){
+      var c = Math.floor(BJ.hands[0].bet / 2);
+      if(c > S.bal) return toast('보험료가 부족합니다', 'no');
+      setBal(S.bal - c); BJ.ins = c; toast('보험 ' + fmt(c) + 'P 가입', 'gd'); bjPostIns(); return;
+    }
+    if(a === 'ins-no'){ bjPostIns(); return; }
+    if(!BJ.live) return;
+    var h = BJ.hands[BJ.cur];
+    if(a === 'hit'){
+      h.c.push(BJ.shoe.draw()); bjRender();
+      if(E.bjTotal(h.c) >= 21){ h.done = true; bjNext(); } else bjActs();
+    } else if(a === 'stand'){
+      h.done = true; bjNext();
+    } else if(a === 'double'){
+      if(S.bal < h.bet) return toast('보유 머니가 부족합니다', 'no');
+      setBal(S.bal - h.bet); h.bet *= 2;
+      h.c.push(BJ.shoe.draw()); h.done = true; bjRender(); bjNext();
+    } else if(a === 'split'){
+      if(S.bal < h.bet) return toast('보유 머니가 부족합니다', 'no');
+      setBal(S.bal - h.bet);
+      var isAce = (h.c[0].r === 0);
+      var h2 = {c:[h.c.pop(), BJ.shoe.draw()], bet:h.bet, done:isAce, sa:isAce};
+      h.c.push(BJ.shoe.draw()); h.done = isAce; h.sa = isAce;
+      BJ.hands.push(h2);
+      BJ.cur = 0; bjRender();
+      if(isAce){ bjNext(); } else { bjActs(); }
+    }
+  };
+});
+function bjNext(){
+  for(var i = 0; i < BJ.hands.length; i++){
+    if(!BJ.hands[i].done && E.bjTotal(BJ.hands[i].c) < 21){ BJ.cur = i; bjRender(); bjActs(); return; }
+  }
+  $('bjActs').hidden = true;
+  var alive = BJ.hands.some(function(h){ return E.bjTotal(h.c) <= 21; });
+  BJ.revealed = true; bjRender();
+  if(alive){
+    var step = function(){
+      if(E.bjTotal(BJ.dealer) < 17){
+        BJ.dealer.push(BJ.shoe.draw()); bjRender(); setTimeout(step, 480);
+      } else setTimeout(bjSettle, 320);
+    };
+    setTimeout(step, 480);
+  } else setTimeout(bjSettle, 320);
+}
+function bjSettle(){
+  BJ.revealed = true; bjRender();
+  BJ.live = false;
+  var dt = E.bjTotal(BJ.dealer), dbj = E.bjIsBlackjack(BJ.dealer);
+  var totalBet = 0, totalRet = 0, labels = [];
+  BJ.hands.forEach(function(h){
+    totalBet += h.bet;
+    var pt = E.bjTotal(h.c), ret = 0, txt;
+    var pbj = E.bjIsBlackjack(h.c) && BJ.hands.length === 1;
+    if(pt > 21){ ret = 0; txt = '버스트'; }
+    else if(pbj && !dbj){ ret = h.bet * 2.5; txt = '블랙잭'; }
+    else if(dbj && pbj){ ret = h.bet; txt = '푸시'; }
+    else if(dbj){ ret = 0; txt = '딜러 블랙잭'; }
+    else if(dt > 21){ ret = h.bet * 2; txt = '딜러 버스트'; }
+    else if(pt > dt){ ret = h.bet * 2; txt = '승'; }
+    else if(pt < dt){ ret = 0; txt = '패'; }
+    else { ret = h.bet; txt = '푸시'; }
+    totalRet += ret; labels.push(txt);
+  });
+  if(BJ.ins > 0){ totalBet += BJ.ins; if(dbj) totalRet += BJ.ins * 3; }
+  var net = totalRet - totalBet;
+  banner('bjResult', net, labels.join(' / '),
+         '딜러 ' + (dt > 21 ? '버스트' : dt) + ' · ' + netTxt(net));
+  settleRound('블랙잭', totalBet, totalRet, labels.join('/'));
+  $('gDeal').hidden = false; G.busy = false;
+}
+
+/* ==================== 룰렛 ==================== */
+var RL = { rot:0, brot:0, built:false, last:[] };
+function rlInit(){
+  if(!RL.built){
+    var seg = 360 / 37, stops = [];
+    E.RL_ORDER.forEach(function(n, i){
+      var col = n === 0 ? '#0f6b50' : (E.rlColor(n) === 'red' ? '#b81b30' : '#15181f');
+      stops.push(col + ' ' + (i * seg).toFixed(3) + 'deg ' + ((i + 1) * seg).toFixed(3) + 'deg');
+    });
+    $('rlInner').style.background = 'conic-gradient(' + stops.join(',') + ')';
+    $('rlInner').style.borderRadius = '50%';
+    $('rlBall').querySelector('i').style.cssText = 'top:-72px;left:0';
+    var g = $('rlGrid'); g.innerHTML = '';
+    var z = el('button', 'gr', '0'); z.setAttribute('data-n', '0');
+    z.onclick = function(){ placeBet('n:0'); }; g.appendChild(z);
+    for(var n = 1; n <= 36; n++){
+      (function(n){
+        var b = el('button', E.rlColor(n) === 'red' ? 'rd' : 'bk', '' + n);
+        b.setAttribute('data-n', '' + n);
+        b.onclick = function(){ placeBet('n:' + n); };
+        g.appendChild(b);
+      })(n);
+    }
+    document.querySelectorAll('[data-rl]').forEach(function(b){
+      b.onclick = function(){ placeBet(b.getAttribute('data-rl')); };
+    });
+    RL.built = true;
+  }
+  $('rlResult').innerHTML = ''; $('rlNum').textContent = '–';
+  rlLast();
+}
+function rlLast(){
+  var h = '';
+  RL.last.slice(-14).reverse().forEach(function(n){
+    h += '<i class="' + (n === 0 ? 'gr' : (E.rlColor(n) === 'red' ? 'rd' : 'bk')) + '">' + n + '</i>';
+  });
+  $('rlLast').innerHTML = h;
+}
+function rlSpin(){
+  var st = stake();
+  if(st <= 0) return toast('베팅 후 스핀을 눌러 주세요', 'no');
+  if(st > S.bal) return toast('보유 머니가 부족합니다', 'no');
+  G.busy = true; if(G.clr){ clearTimeout(G.clr); G.clr = null; } G.last = JSON.parse(JSON.stringify(G.bets));
+  var betsSnap = G.last;
+  setBal(S.bal - st);
+  $('rlResult').innerHTML = ''; $('rlNum').textContent = '–';
+
+  var n = E.rouletteSpin(), i = E.RL_ORDER.indexOf(n), seg = 360 / 37;
+  var target = (360 - (i + 0.5) * seg) % 360;
+  var cur = ((RL.rot % 360) + 360) % 360;
+  RL.rot += 360 * 5 + (((target - cur) % 360) + 360) % 360;
+  var bcur = ((RL.brot % 360) + 360) % 360;
+  RL.brot -= (360 * 8 + bcur);
+
+  $('rlInner').style.transition = 'transform 3.6s cubic-bezier(.16,.72,.2,1)';
+  $('rlInner').style.transform = 'rotate(' + RL.rot + 'deg)';
+  $('rlBall').style.transition = 'transform 3.9s cubic-bezier(.1,.68,.18,1)';
+  $('rlBall').style.transform = 'rotate(' + RL.brot + 'deg)';
+
+  setTimeout(function(){
+    $('rlNum').textContent = n;
+    $('rlNum').style.color = n === 0 ? '#7bf0c6' : (E.rlColor(n) === 'red' ? '#ff8290' : '#f7e3a4');
+    var ret = 0, wins = [], k;
+    for(k in betsSnap){
+      var m = E.roulettePayout(k, n), b = betsSnap[k];
+      ret += (m < 0) ? 0 : b * (1 + m);
+      if(m > 0) wins.push(k);
+    }
+    markWins('data-rl', wins.filter(function(x){ return x.slice(0,2) !== 'n:'; }));
+    var colTxt = n === 0 ? '제로' : (E.rlColor(n) === 'red' ? '빨강' : '검정');
+    banner('rlResult', ret - st, n + ' · ' + colTxt, netTxt(ret - st));
+    settleRound('룰렛', st, ret, n + ' ' + colTxt);
+    RL.last.push(n); if(RL.last.length > 60) RL.last.shift();
+    rlLast(); G.busy = false;
+    G.clr = setTimeout(function(){ if(G.busy) return; G.bets = {}; paintStake(); G.clr = null; }, 900);
+  }, 4000);
+}
+
+/* ==================== 다이사이 ==================== */
+var PIPS = {1:[4], 2:[0,8], 3:[0,4,8], 4:[0,2,6,8], 5:[0,2,4,6,8], 6:[0,2,3,5,6,8]};
+function dieHTML(v, roll){
+  var on = PIPS[v], h = '', i;
+  for(i = 0; i < 9; i++) h += '<u class="' + (on.indexOf(i) >= 0 ? 'on' : '') + '"></u>';
+  return '<div class="die' + (roll ? ' roll' : '') + '">' + h + '</div>';
+}
+var SC = { built:false };
+function scInit(){
+  if(!SC.built){
+    var sums = $('scSums'); sums.innerHTML = '';
+    for(var s = 4; s <= 17; s++){
+      (function(s){
+        var b = el('button', 'spot sm');
+        b.setAttribute('data-sc', 's:' + s);
+        b.innerHTML = '<div class="nm">' + s + '</div><div class="pay">' + E.SIC_SUM_PAY[s] +
+                      ':1</div><div class="stk" data-stk="s:' + s + '"></div>';
+        b.onclick = function(){ placeBet('s:' + s); };
+        sums.appendChild(b);
+      })(s);
+    }
+    var tri = $('scTriples'); tri.innerHTML = '';
+    var sng = $('scSingles'); sng.innerHTML = '';
+    for(var n = 1; n <= 6; n++){
+      (function(n){
+        var b = el('button', 'spot sm');
+        b.setAttribute('data-sc', 't:' + n);
+        b.innerHTML = '<div class="nm">' + n + n + n + '</div><div class="pay">180:1</div>' +
+                      '<div class="stk" data-stk="t:' + n + '"></div>';
+        b.onclick = function(){ placeBet('t:' + n); };
+        tri.appendChild(b);
+        var c = el('button', 'spot sm');
+        c.setAttribute('data-sc', '1:' + n);
+        c.innerHTML = '<div class="nm">' + n + '</div><div class="pay">1~3:1</div>' +
+                      '<div class="stk" data-stk="1:' + n + '"></div>';
+        c.onclick = function(){ placeBet('1:' + n); };
+        sng.appendChild(c);
+      })(n);
+    }
+    document.querySelectorAll('[data-sc]').forEach(function(b){
+      var k = b.getAttribute('data-sc');
+      if(k.indexOf(':') < 0) b.onclick = function(){ placeBet(k); };
+    });
+    SC.built = true;
+  }
+  $('scDice').innerHTML = dieHTML(1) + dieHTML(2) + dieHTML(3);
+  $('scSum').textContent = '–'; $('scResult').innerHTML = '';
+}
+function scRoll(){
+  var st = stake();
+  if(st <= 0) return toast('베팅 후 롤을 눌러 주세요', 'no');
+  if(st > S.bal) return toast('보유 머니가 부족합니다', 'no');
+  G.busy = true; if(G.clr){ clearTimeout(G.clr); G.clr = null; } G.last = JSON.parse(JSON.stringify(G.bets));
+  var betsSnap = G.last;
+  setBal(S.bal - st);
+  $('scResult').innerHTML = ''; $('scSum').textContent = '–';
+  var d = E.sicRoll(), ticks = 0;
+  var iv = setInterval(function(){
+    $('scDice').innerHTML = dieHTML(E.rnd(6)+1, true) + dieHTML(E.rnd(6)+1, true) + dieHTML(E.rnd(6)+1, true);
+    if(++ticks > 9){
+      clearInterval(iv);
+      $('scDice').innerHTML = dieHTML(d[0]) + dieHTML(d[1]) + dieHTML(d[2]);
+      var sum = d[0] + d[1] + d[2];
+      $('scSum').textContent = sum;
+      var ret = 0, wins = [], k;
+      for(k in betsSnap){
+        var m = E.sicPayout(k, d), b = betsSnap[k];
+        ret += (m < 0) ? 0 : b * (1 + m);
+        if(m > 0) wins.push(k);
+      }
+      markWins('data-sc', wins);
+      var triple = (d[0] === d[1] && d[1] === d[2]);
+      var lab = triple ? '트리플 ' + d[0] : (sum >= 11 ? '대' : '소') + ' ' + sum;
+      banner('scResult', ret - st, d.join(' · ') + ' = ' + sum, lab + ' · ' + netTxt(ret - st));
+      settleRound('다이사이', st, ret, lab);
+      G.busy = false;
+      G.clr = setTimeout(function(){ if(G.busy) return; G.bets = {}; paintStake(); G.clr = null; }, 900);
+    }
+  }, 70);
+}
+
+/* ==================== 슬롯 ==================== */
+var SL = { built:false };
+function slInit(){
+  if(!SL.built){
+    for(var r = 0; r < 3; r++){
+      var h = '', rep, i;
+      for(rep = 0; rep < 5; rep++)
+        for(i = 0; i < 32; i++) h += '<div>' + E.SLOT_SYM[E.SLOT_STRIP[i]].ch + '</div>';
+      $('sl' + r).innerHTML = h;
+      $('sl' + r).style.transform = 'translateY(0px)';
+    }
+    var pt = '';
+    E.SLOT_ORDER.forEach(function(k){
+      var s = E.SLOT_SYM[k];
+      pt += '<div>' + s.ch + s.ch + s.ch + ' <b>' + fmt(s.pay) + '배</b></div>';
+    });
+    pt += '<div>🍒🍒 <b>1배</b></div>';
+    $('slPay').innerHTML = pt;
+    $('slRtp').textContent = (E.SLOT_RTP * 100).toFixed(2) + '%';
+    SL.built = true;
+  }
+  $('slWin').textContent = '';
+}
+function slSpin(){
+  var bet = G.chip;
+  if(bet > S.bal) return toast('보유 머니가 부족합니다', 'no');
+  G.busy = true; setBal(S.bal - bet);
+  $('slWin').textContent = '';
+  var stops = E.slotSpin(), durs = [1300, 1700, 2100];
+  for(var r = 0; r < 3; r++){
+    (function(r){
+      var s = $('sl' + r);
+      s.style.transition = 'none';
+      s.style.transform = 'translateY(0px)';
+      void s.offsetHeight;
+      s.style.transition = 'transform ' + durs[r] + 'ms cubic-bezier(.15,.62,.24,1)';
+      s.style.transform = 'translateY(-' + ((2 * 32 + stops[r]) * 96) + 'px)';
+    })(r);
+  }
+  setTimeout(function(){
+    var sym = [E.SLOT_STRIP[stops[0]], E.SLOT_STRIP[stops[1]], E.SLOT_STRIP[stops[2]]];
+    var mult = E.slotEval(sym), ret = bet * mult;
+    var lab;
+    if(mult === 0){ lab = '꽝'; $('slWin').textContent = ''; }
+    else if(sym[0] === sym[1] && sym[1] === sym[2]){
+      lab = E.SLOT_SYM[sym[0]].nm + ' 3개';
+      $('slWin').textContent = lab + ' · ' + fmt(ret) + ' P';
+    } else { lab = '체리 2개'; $('slWin').textContent = lab + ' · ' + fmt(ret) + ' P'; }
+    settleRound('슬롯', bet, ret, lab);
+    G.busy = false;
+  }, durs[2] + 150);
+}
+
+
+/* ==================== 게임 방법 ==================== */
+var HOWTO = {
+bacc:{nm:'바카라',
+ lead:'플레이어와 뱅커 중 카드 합이 <b>9에 가까운 쪽</b>을 맞히는 게임입니다. 카드는 정해진 규칙에 따라 자동으로 배분되며, 참가자는 어디에 걸지만 고르면 됩니다.',
+ secs:[
+  {h:'카드 계산법', p:'A는 1점, 2~9는 숫자 그대로, 10·J·Q·K는 0점입니다. 카드 합의 <b>일의 자리</b>만 점수로 씁니다.',
+   ul:['7 + 8 = 15 → <b>5점</b>','K + 9 = 9 → <b>9점</b>','A + 2 = 3 → <b>3점</b>']},
+  {h:'진행 순서', ul:[
+   '플레이어와 뱅커에 각각 2장씩 배분합니다',
+   '어느 한쪽이 8 또는 9면 <b>내추럴</b>로 그 자리에서 끝납니다',
+   '아니면 규칙에 따라 세 번째 카드를 받습니다',
+   '플레이어는 합 0~5에서 한 장 더, 6~7이면 그대로 멈춥니다',
+   '뱅커는 자기 합과 플레이어가 받은 세 번째 카드에 따라 결정됩니다']},
+  {h:'배당', tbl:[['플레이어','1 : 1'],['뱅커 (커미션 5%)','0.95 : 1'],['타이','8 : 1'],['플레이어 페어 / 뱅커 페어','11 : 1']]},
+  {h:'알아둘 점', ul:[
+   '타이가 나오면 플레이어·뱅커에 건 금액은 <b>그대로 반환</b>됩니다',
+   '페어는 처음 받은 2장이 같은 숫자일 때 적중입니다',
+   '로드맵의 파랑은 플레이어, 빨강은 뱅커, 초록은 타이입니다']}],
+ tip:'뱅커가 통계적으로 조금 더 자주 이깁니다. 커미션 5%를 떼고도 뱅커의 하우스 엣지가 1.06%로 플레이어(1.24%)보다 낮습니다.'},
+
+bj:{nm:'블랙잭',
+ lead:'21을 넘지 않으면서 딜러보다 높은 합을 만들면 이깁니다. 21을 넘으면 <b>버스트</b>로 그 즉시 패배합니다.',
+ secs:[
+  {h:'카드 계산법', p:'A는 1 또는 11 중 유리한 쪽으로 자동 계산됩니다. 2~9는 숫자 그대로, 10·J·Q·K는 모두 10점입니다.',
+   ul:['A + K = <b>21</b> (블랙잭)','A + 5 = 16 또는 <b>6</b> (소프트 16)','10 + 7 + 8 = <b>25</b> → 버스트']},
+  {h:'선택할 수 있는 행동', ul:[
+   '<b>히트</b> — 카드를 한 장 더 받습니다',
+   '<b>스탠드</b> — 멈추고 딜러에게 차례를 넘깁니다',
+   '<b>더블다운</b> — 베팅을 2배로 올리고 딱 한 장만 받습니다',
+   '<b>스플릿</b> — 처음 2장이 같은 숫자면 두 핸드로 나눠 각각 진행합니다',
+   '<b>보험</b> — 딜러 오픈카드가 A일 때 베팅의 절반을 겁니다']},
+  {h:'딜러 규칙', ul:[
+   '딜러는 합이 16 이하면 반드시 카드를 받습니다',
+   '17 이상이면 무조건 멈춥니다 (A를 포함한 소프트 17도 멈춤)',
+   '딜러가 버스트하면 살아 있는 모든 핸드가 이깁니다']},
+  {h:'배당', tbl:[['일반 승리','1 : 1'],['블랙잭 (처음 2장 21)','3 : 2'],['보험 적중','2 : 1'],['무승부 (푸시)','반환']]},
+  {h:'베팅 방법', p:'아래에서 고른 칩 금액이 한 판의 베팅액입니다. 딜을 누르면 시작됩니다. 스플릿과 더블다운은 같은 금액이 추가로 들어갑니다.'}],
+ tip:'보험은 장기적으로 손해입니다. 하우스 엣지가 7.4%로 본 게임(약 0.5%)보다 훨씬 높습니다.'},
+
+roul:{nm:'룰렛',
+ lead:'0부터 36까지 <b>37칸</b>으로 이루어진 유럽식 싱글 제로 휠입니다. 구슬이 멈출 칸을 맞히면 됩니다.',
+ secs:[
+  {h:'인사이드 베팅', p:'숫자판에서 원하는 숫자를 직접 누릅니다.', tbl:[['스트레이트 (숫자 1개)','35 : 1']]},
+  {h:'아웃사이드 베팅', tbl:[['빨강 / 검정','1 : 1'],['홀수 / 짝수','1 : 1'],['1–18 / 19–36','1 : 1'],['1st · 2nd · 3rd 12 (더즌)','2 : 1']]},
+  {h:'0이 나오면', p:'0은 빨강도 검정도, 홀수도 짝수도 아닙니다. 0이 나오면 아웃사이드 베팅은 모두 패배하고, 0에 직접 건 스트레이트만 적중합니다.'},
+  {h:'베팅 방법', p:'칩을 고른 뒤 원하는 자리를 누르면 그 금액만큼 쌓입니다. 여러 곳에 동시에 걸 수 있고, 같은 자리를 여러 번 누르면 금액이 더해집니다.'}],
+ tip:'모든 베팅의 하우스 엣지는 2.70%로 똑같습니다. 배당이 큰 베팅이 더 유리한 게 아니라 변동성만 커집니다.'},
+
+sic:{nm:'다이사이',
+ lead:'주사위 <b>3개</b>를 굴려 나온 눈의 합이나 조합을 맞히는 게임입니다.',
+ secs:[
+  {h:'대 / 소', ul:[
+   '<b>소</b> — 합계 4~10 · 1 : 1',
+   '<b>대</b> — 합계 11~17 · 1 : 1',
+   '세 눈이 모두 같은 <b>트리플</b>이 나오면 대·소·홀·짝은 전부 패배합니다']},
+  {h:'합계 베팅', tbl:[['4 · 17','60 : 1'],['5 · 16','30 : 1'],['6 · 15','18 : 1'],['7 · 14','12 : 1'],['8 · 13','8 : 1'],['9 · 10 · 11 · 12','6 : 1']]},
+  {h:'트리플', tbl:[['애니 트리플 (아무 트리플)','30 : 1'],['특정 트리플 (숫자 지정)','180 : 1']]},
+  {h:'싱글 넘버', p:'고른 숫자가 세 주사위 중 몇 개 나왔는지에 따라 지급됩니다.',
+   tbl:[['1개 나옴','1 : 1'],['2개 나옴','2 : 1'],['3개 나옴','3 : 1']]}],
+ tip:'대·소와 홀·짝이 하우스 엣지 2.78%로 가장 유리합니다. 특정 트리플은 180배지만 엣지가 16.2%로 가장 불리합니다.'},
+
+slot:{nm:'슬롯',
+ lead:'릴 3개가 멈췄을 때 <b>가운데 한 줄(페이라인)</b>에 오는 심볼로 승부합니다.',
+ secs:[
+  {h:'당첨 조건', ul:['같은 심볼 3개가 페이라인에 나란히 오면 당첨입니다','체리는 2개만 나와도 당첨입니다']},
+  {h:'배당표', tbl:[['7️⃣ 7️⃣ 7️⃣','2,000배'],['💎 💎 💎','500배'],['⭐ ⭐ ⭐','150배'],
+                   ['🔔 🔔 🔔','40배'],['🍒 🍒 🍒','14배'],['🍋 🍋 🍋','2배'],['🍒 🍒 (2개)','1배']]},
+  {h:'릴 구성', p:'각 릴에는 32개의 스톱이 있습니다. 심볼마다 개수가 달라서 자주 나오는 심볼일수록 배당이 낮습니다.',
+   tbl:[['🍋 레몬','릴당 13개'],['🍒 체리','릴당 8개'],['🔔 벨','릴당 5개'],
+        ['⭐ 스타','릴당 3개'],['💎 다이아','릴당 2개'],['7️⃣ 세븐','릴당 1개']]},
+  {h:'베팅 방법', p:'아래에서 고른 칩 금액이 1회 스핀의 베팅액입니다.'}],
+ tip:'환수율(RTP) 95.28%. 장기적으로 베팅한 금액의 약 95%가 지급된다는 뜻입니다.'}
+};
+function howtoHTML(d){
+  var h = '<div class="h-lead">' + d.lead + '</div>';
+  d.secs.forEach(function(sec){
+    h += '<div class="h-sec"><h3>' + sec.h + '</h3>';
+    if(sec.p) h += '<p>' + sec.p + '</p>';
+    if(sec.ul) h += '<ul>' + sec.ul.map(function(x){ return '<li>' + x + '</li>'; }).join('') + '</ul>';
+    if(sec.tbl) h += '<table class="h-tbl">' + sec.tbl.map(function(r){
+        return '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td></tr>'; }).join('') + '</table>';
+    h += '</div>';
+  });
+  if(d.tip) h += '<div class="h-tip"><b>TIP</b>' + d.tip + '</div>';
+  return h;
+}
+function openHowto(id){
+  var d = HOWTO[id]; if(!d) return;
+  $('hTitle').textContent = d.nm + ' 게임 방법';
+  $('hBody').innerHTML = howtoHTML(d);
+  $('hBody').scrollTop = 0;
+  $('howto').classList.add('on');
+}
+function closeHowto(){ $('howto').classList.remove('on'); }
+$('hBack').onclick = closeHowto;
+$('gHelp').onclick = function(){ if(G.id) openHowto(G.id); };
+
+/* 안드로이드 하드웨어 뒤로가기 — MainActivity가 호출한다 */
+window.__onBack = function(){
+  if($('howto').classList.contains('on')){ closeHowto(); return true; }
+  if($('modal').classList.contains('on')){ closeModal(false); return true; }
+  if($('gameview').classList.contains('on')){
+    if(G.busy) return true;
+    $('gameview').classList.remove('on');
+    G.id = null; renderHist(); renderMy();
+    return true;
+  }
+  var cur = document.querySelector('.view.on');
+  if(cur && cur.id !== 'v-home'){ go('home'); return true; }
+  return false;
+};
+
+
+/* ==================== 계정 (로그인/회원가입) ==================== */
+var USERS_KEY = 'nocturne.users.v1';
+var SESS_KEY  = 'nocturne.session.v1';
+var CURRENT   = null;
+
+function loadUsers(){ try{ return JSON.parse(localStorage.getItem(USERS_KEY)) || {}; }catch(e){ return {}; } }
+function saveUsers(u){ try{ localStorage.setItem(USERS_KEY, JSON.stringify(u)); }catch(e){} }
+function userExists(id){ return Object.prototype.hasOwnProperty.call(loadUsers(), id); }
+function getSession(){
+  try{ return localStorage.getItem(SESS_KEY) || sessionStorage.getItem(SESS_KEY); }catch(e){ return null; }
+}
+function setSession(id, persist){
+  try{
+    sessionStorage.setItem(SESS_KEY, id);
+    if(persist) localStorage.setItem(SESS_KEY, id); else localStorage.removeItem(SESS_KEY);
+  }catch(e){}
+}
+function clearSession(){ try{ localStorage.removeItem(SESS_KEY); sessionStorage.removeItem(SESS_KEY); }catch(e){} }
+
+function defaultsState(){
+  return { bal:0, wdPw:'0925', hist:[], wager:0, won:0, rounds:0, wins:0, losses:0,
+           depName:'', depBank:'004', depAcct:'', wdName:'', wdBank:'004', wdAcct:'' };
+}
+function resetState(){ var d = defaultsState(); for(var k in S) delete S[k]; for(var k in d) S[k] = d[k]; }
+
+function enterApp(userId){
+  CURRENT = userId;
+  KEY = 'nocturne.save.v1.' + userId;
+  resetState();
+  load();
+  $('depName').value = S.depName || '';
+  $('depAcct').value = S.depAcct || '';
+  $('wdName').value  = S.wdName || '';
+  $('wdAcct').value  = S.wdAcct || '';
+  fillBanks($('depBank'), S.depBank);
+  fillBanks($('wdBank'), S.wdBank);
+  /* 계좌 힌트 갱신 — 리스너는 boot에서 1회만 등록되므로 여기선 input 이벤트만 발생 */
+  try{ $('depAcct').dispatchEvent(new Event('input')); $('wdAcct').dispatchEvent(new Event('input')); }catch(e){}
+  paintBal(); renderHist(); renderMy();
+  $('auth').classList.remove('on');
+  go('home');
+}
+
+function showAuth(){
+  clearSession(); CURRENT = null;
+  authTab('login');
+  $('liMsg').textContent = ''; $('suMsg').textContent = '';
+  $('liPw').value = ''; $('suPw').value = ''; $('suPw2').value = '';
+  $('auth').classList.add('on');
+}
+
+function authTab(which){
+  var login = which === 'login';
+  $('atLogin').classList.toggle('on', login);
+  $('atSignup').classList.toggle('on', !login);
+  $('fLogin').classList.toggle('on', login);
+  $('fSignup').classList.toggle('on', !login);
+}
+
+function doLogin(){
+  var id = $('liId').value.trim();
+  var pw = $('liPw').value;
+  var msg = $('liMsg'); msg.className = 'auth-msg';
+  if(!id || !pw){ msg.textContent = '아이디와 비밀번호를 입력해 주세요'; return; }
+  var users = loadUsers(), u = users[id];
+  if(!u || u.pw !== pw){ msg.textContent = '아이디 또는 비밀번호가 일치하지 않습니다'; return; }
+  setSession(id, $('liAuto').checked);
+  msg.className = 'auth-msg ok'; msg.textContent = u.nick + '님, 환영합니다';
+  enterApp(id);
+}
+
+function doSignup(){
+  var id = $('suId').value.trim();
+  var nick = $('suNick').value.trim();
+  var pw = $('suPw').value, pw2 = $('suPw2').value;
+  var msg = $('suMsg'); msg.className = 'auth-msg';
+  if(!/^[A-Za-z0-9]{4,20}$/.test(id)){ msg.textContent = '아이디는 영문·숫자 4~20자로 입력해 주세요'; return; }
+  if(userExists(id)){ msg.textContent = '이미 사용 중인 아이디입니다'; return; }
+  if(!nick){ nick = id; }
+  if(pw.length < 4){ msg.textContent = '비밀번호는 4자 이상이어야 합니다'; return; }
+  if(pw !== pw2){ msg.textContent = '비밀번호가 일치하지 않습니다'; return; }
+  var users = loadUsers();
+  users[id] = { pw:pw, nick:nick, created:Date.now() };
+  saveUsers(users);
+  msg.className = 'auth-msg ok'; msg.textContent = '가입이 완료되었습니다';
+  setSession(id, true);
+  enterApp(id);
+}
+
+function doLogout(){
+  ask({title:'로그아웃', body:'로그아웃 하시겠습니까?', yes:'로그아웃', no:'취소', danger:true})
+    .then(function(ok){
+      if(!ok) return;
+      // 진행 중 화면 정리
+      if($('gameview').classList.contains('on')){ $('gameview').classList.remove('on'); G.id = null; G.busy = false; }
+      if($('howto').classList.contains('on')) $('howto').classList.remove('on');
+      resetState();
+      showAuth();
+      toast('로그아웃되었습니다');
+    });
+}
+
+function initAuth(){
+  $('atLogin').onclick  = function(){ authTab('login'); };
+  $('atSignup').onclick = function(){ authTab('signup'); };
+  $('goSignup').onclick = function(){ authTab('signup'); };
+  $('goLogin').onclick  = function(){ authTab('login'); };
+  $('fLogin').addEventListener('submit', function(e){ e.preventDefault(); doLogin(); });
+  $('fSignup').addEventListener('submit', function(e){ e.preventDefault(); doSignup(); });
+  $('mnLogout').onclick = doLogout;
+}
+
+/* 바카라 베팅 스팟 클릭 바인딩 (v1.0 누락 버그 수정) */
+function bindBaccaratSpots(){
+  document.querySelectorAll('[data-bc]').forEach(function(b){
+    b.onclick = function(){ placeBet(b.getAttribute('data-bc')); };
+  });
+}
+
+/* ==================== 부팅 ==================== */
+(function boot(){
+  fillBanks($('depBank'), '004');
+  fillBanks($('wdBank'), '004');
+  bindAmt($('depAmt')); bindAmt($('wdAmt'));
+  buildQuick($('depQuick'), $('depAmt'));
+  buildQuick($('wdQuick'), $('wdAmt'));
+  bindAcct($('depAcct'), $('depBank'), $('depAcctHint'));
+  bindAcct($('wdAcct'), $('wdBank'), $('wdAcctHint'));
+  bindBaccaratSpots();
+  renderGames(); initTicker(); renderOdds();
+  setWTab('dep'); showDep('form');
+  initAuth();
+  var _sess = getSession();
+  if(_sess && userExists(_sess)) enterApp(_sess); else showAuth();
+  setTimeout(function(){ $('splash').classList.add('off'); }, 1150);
+  setTimeout(function(){ var s = $('splash'); if(s) s.remove(); }, 1800);
+})();
+</script>
+</body>
+</html>
